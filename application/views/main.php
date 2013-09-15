@@ -7,25 +7,140 @@
 	<title>Maize Data Generator</title>
 </head>
 <body>
-	<header>
+	<header class="well">
 		<h1 align="center"> MAIZE DATA GENERATOR </h1>
 	</header>
 
 	<div class="container">
+	<form class="form-horizontal" name="maize_data_form" action="http://localhost/maize/index.php/main/load_maize_data" method="post">
 
 	<!-- Contains all the phenotypes and related columns which can be chosen -->
 	<table class="table table-bordered table-condensed">
+	<thead>
+		<th>Step 1 : Choose phenotypes</th>
+		<th>Step 2 : Choose phenotype metadata</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				<label class="checkbox">
+					<input type="checkbox" id="kernel_3d_cbox"> kernel_3d
+				</label>
+			</td>
+			<td>
+						
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label class="checkbox">
+					<input type="checkbox" id="spectra_cbox"> spectra
+				</label>
+			</td>
+			<td>
+						
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label class="checkbox">
+					<input type="checkbox" id="weights_cbox"> weights
+				</label>
+			</td>
+			<td>
+						
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<label class="checkbox">
+					<input type="checkbox" id="predictions_cbox"> predictions
+				</label>
+			</td>
+			<td>
+						
+			</td>
+		</tr>						
+	</tbody>
 	</table>
-
-	<br />
 
 	<!--  Contains the various filters and constraints to be applied the key data elements -->
 	<table class="table table-bordered table-condensed">
+	<thead>
+		<th colspan="3">Step 3 : Choose constraints/filters</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td>Type</td>
+			<td>
+				<select id="filter_type_options" name="filter_type_options">
+					<option>EQUALS</option>
+					<option>STARTS WITH</option>
+					<option>ENDS WITH</option>
+					<option>CONTAINS</option>
+				</select>
+			</td>
+			<td><input type="text" id="filter_type" name="filter_type"></td>
+		</tr>
+		<tr>
+			<td>Plate Name</td>
+			<td>
+				<select id="filter_plate_name_options" name="filter_plate_name_options">
+					<option>EQUALS</option>
+					<option>STARTS WITH</option>
+					<option>ENDS WITH</option>
+					<option>CONTAINS</option>
+				</select>
+			</td>
+			<td><input type="text" id="filter_plate_name"></td>
+		</tr>
+		<tr>
+			<td>Packet Name</td>
+			<td>
+				<select id="filter_packet_name_options" name="filter_packet_name_options">
+					<option>EQUALS</option>
+					<option>STARTS WITH</option>
+					<option>ENDS WITH</option>
+					<option>CONTAINS</option>
+				</select>
+			</td>
+			<td><input type="text" id="filter_packet_name"></td>
+		</tr>
+	</tbody>
 	</table>
 
-	<br />
+	<!-- Aggregate function to be chosen for the entire data -->
+	<table class="table table-bordered table-condensed">
+		<thead>
+				<th><label class="control-label" for="aggregate_func">Step 4 : Choose aggregate function</label></th>
+				<th>
+					<div class="control-group">  
+            		<div class="controls">  
+              		<select id="aggregate_func">  
+                	<option>COUNT</option>  
+                	<option>AVERAGE</option>  
+                	<option>STANDARD DEVIATION</option>  
+              		</select>  
+            		</div>  
+          			</div>
+				</th>
+        </thead>
+    </table>
 
-	
+	<!-- Generate the CSV file -->
+
+	<table class="table table-bordered table-condensed">
+	<thead>
+		<th>Step 5 : Generate CSV File</th>
+		<th>
+			<div class="form-actions">
+        		<button type="submit" class="btn btn-danger">Submit</button>  
+		    </div>
+		</th>
+	</thead>
+    </table>
+
+	</form>
 
 	</div>
 </body>
