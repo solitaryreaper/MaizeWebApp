@@ -27,12 +27,12 @@ class Main extends CI_Controller {
 
 		// 2) Get the dynamic query based on the form parameters
 		$query = "select * from kernel_3d limit 10";
-		print "Generating data for query : " . $query;
 
 		// 3) Fetch the results from maize database
 		$maize_results = $this->maizedao->execute_query($query);
 
 		// 4) Convert data to CSV format for download
-		$this->excelutils->generate_excel_file($maize_results);
+		$result_header = ""; // TODO : This has to be dynamically calculated
+		$this->excelutils->generate_excel_file($results_header, $maize_results);
 	}
 }

@@ -12,7 +12,7 @@ class Maizedao extends CI_Model {
     function execute_query($query)
     {
         $output = $this->db->query($query);
-        print "\nFound " . $output->num_rows() . " results for query " . $query;
+        //print "\nFound " . $output->num_rows() . " results for query " . $query;
         return $output->result();
     }
 

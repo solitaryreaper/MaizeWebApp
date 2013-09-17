@@ -1,0 +1,7 @@
+body { 
+	font-family: museo-slab, 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+}
+
+.table thead th {
+    background-color: #8DBDD8;
+}

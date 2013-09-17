@@ -3,6 +3,9 @@
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" ></script>
 	<script type="text/javascript" src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 	<link type="text/css" rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="<?php echo(CSS.'main.css'); ?>">
 
 	<title>Maize Data Generator</title>
 </head>
@@ -15,10 +18,10 @@
 	<form class="form-horizontal" name="maize_data_form" action="http://localhost/maize/index.php/main/load_maize_data" method="post">
 
 	<!-- Contains all the phenotypes and related columns which can be chosen -->
-	<table class="table table-bordered table-condensed">
+	<table class="table table-bordered table-hover table-condensed">
 	<thead>
-		<th>Step 1 : Choose phenotypes</th>
-		<th>Step 2 : Choose phenotype metadata</th>
+		<th>Step 1 <i class="icon-arrow-right"></i> Choose phenotypes</th>
+		<th>Step 2 <i class="icon-arrow-right"></i> Choose phenotype metadata</th>
 	</thead>
 	<tbody>
 		<tr>
@@ -65,9 +68,9 @@
 	</table>
 
 	<!--  Contains the various filters and constraints to be applied the key data elements -->
-	<table class="table table-bordered table-condensed">
+	<table class="table table-bordered table-hover table-condensed">
 	<thead>
-		<th colspan="3">Step 3 : Choose constraints/filters</th>
+		<th colspan="3">Step 3 <i class="icon-arrow-right"></i> Choose constraints/filters</th>
 	</thead>
 	<tbody>
 		<tr>
@@ -112,7 +115,7 @@
 	<!-- Aggregate function to be chosen for the entire data -->
 	<table class="table table-bordered table-condensed">
 		<thead>
-				<th><label class="control-label" for="aggregate_func">Step 4 : Choose aggregate function</label></th>
+				<th><label class="control-label" for="aggregate_func">Step 4 <i class="icon-arrow-right"></i> Choose aggregate function</label></th>
 				<th>
 					<div class="control-group">  
             		<div class="controls">  
@@ -129,16 +132,9 @@
 
 	<!-- Generate the CSV file -->
 
-	<table class="table table-bordered table-condensed">
-	<thead>
-		<th>Step 5 : Generate CSV File</th>
-		<th>
-			<div class="form-actions">
-        		<button type="submit" class="btn btn-danger">Submit</button>  
-		    </div>
-		</th>
-	</thead>
-    </table>
+	<div class="form-actions">
+		<button type="submit" class="btn btn-large btn-danger">Submit</button>  
+    </div>
 
 	</form>
 

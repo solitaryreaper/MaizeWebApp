@@ -14,7 +14,7 @@
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://localhost/maize/';
+$config['base_url']	= URL;
 
 /*
 |--------------------------------------------------------------------------
