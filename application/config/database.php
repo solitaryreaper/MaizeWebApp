@@ -48,9 +48,9 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-$db['default']['hostname'] = 'localhost';
+$db['default']['hostname'] = 'barracuda.botany.wisc.edu';
 $db['default']['username'] = 'maizeuser';
-$db['default']['password'] = 'maizeuser';
+$db['default']['password'] = 'PVsgC4jmtyS6';
 $db['default']['database'] = 'maize';
 $db['default']['dbdriver'] = 'postgre';
 $db['default']['dbprefix'] = '';

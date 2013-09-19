@@ -15,7 +15,7 @@
 	</header>
 
 	<div class="container">
-	<form class="form-horizontal" name="maize_data_form" action="http://localhost/maize/index.php/main/load_maize_data" method="post">
+	<form class="form-horizontal" name="maize_data_form" action="http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/load_maize_data" method="post">
 
 	<!-- Contains all the phenotypes and related columns which can be chosen -->
 	<table class="table table-bordered table-hover table-condensed">
