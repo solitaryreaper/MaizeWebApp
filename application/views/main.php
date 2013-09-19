@@ -27,7 +27,7 @@
 		<tr>
 			<td>
 				<label class="checkbox">
-					<input type="checkbox" id="kernel_3d_cbox"> kernel_3d
+					<input type="checkbox" id="kernel_3d_cbox"> Kernel 3D
 				</label>
 			</td>
 			<td>
@@ -37,33 +37,43 @@
 		<tr>
 			<td>
 				<label class="checkbox">
-					<input type="checkbox" id="spectra_cbox"> spectra
+					<input type="checkbox" id="predictions_cbox"> Predictions
 				</label>
 			</td>
 			<td>
 						
 			</td>
 		</tr>
-		<tr>
-			<td>
-				<label class="checkbox">
-					<input type="checkbox" id="weights_cbox"> weights
-				</label>
-			</td>
-			<td>
-						
-			</td>
-		</tr>
-		<tr>
-			<td>
-				<label class="checkbox">
-					<input type="checkbox" id="predictions_cbox"> predictions
-				</label>
-			</td>
-			<td>
-						
-			</td>
-		</tr>						
+                <tr>
+                        <td>
+                                <label class="checkbox">
+                                        <input type="checkbox" id="raw_weight_spectra_cbox"> Raw Weight Spectra
+                                </label>
+                        </td>
+                        <td>
+
+                        </td>
+                </tr>
+                <tr>
+                        <td>
+                                <label class="checkbox">
+                                        <input type="checkbox" id="avg_weight_spectra_cbox"> Average Weight Spectra
+                                </label>
+                        </td>
+                        <td>
+
+                        </td>
+                </tr>
+                <tr>
+                        <td>
+                                <label class="checkbox">
+                                        <input type="checkbox" id="std_weight_spectra_cbox"> Standard Deviation Weight Spectra
+                                </label>
+                        </td>
+                        <td>
+
+                        </td>
+                </tr>						
 	</tbody>
 	</table>
 
@@ -77,19 +87,56 @@
 			<td>Type</td>
 			<td>
 				<select id="filter_type_options" name="filter_type_options">
-					<option>EQUALS</option>
-					<option>STARTS WITH</option>
-					<option>ENDS WITH</option>
-					<option>CONTAINS</option>
+                                        <option selected>EQUALS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
 				</select>
 			</td>
-			<td><input type="text" id="filter_type" name="filter_type"></td>
+                        <td>
+                                <select id="filter_type_values" name="filter_type_values">
+					<option>NONE</option>
+					<option>ALL</option>
+					<option>test</option>
+					<option>calibration</option>
+					<option>cleaning</option>
+					<option>collaborator</option>
+					<option>composition_mutants</option>
+					<option>dek</option>
+					<option>dosage_effect_screen</option>
+					<option>IBM_NILs</option>
+					<option>IBM_RILs</option>
+					<option>maintenance</option>
+					<option>NAM_parents</option>
+					<option>NC-350_RILs</option>
+					<option>seedling_phenotyping_widiv</option>
+					<option>Settles_lab</option>
+					<option>settles_lab</option>
+				</select>
+				<!--
+                                <div>
+                                        <input type="checkbox">NONE</input>
+                                        <input type="checkbox">ALL</input>
+                                        <input type="checkbox">>test</input>
+                                        <input type="checkbox">calibration</input>
+                                        <input type="checkbox">cleaning></input>
+                                        <input type="checkbox">collaborator</input>
+                                        <input type="checkbox">composition_mutants</input>
+                                        <input type="checkbox">dek</input>
+                                        <input type="checkbox">dosage_effect_screen</input>
+                                        <input type="checkbox">IBM_NILs</input>
+                                        <input type="checkbox">IBM_RILs</input>
+                                        <input type="checkbox">maintenance</input>
+                                        <input type="checkbox">NAM_parents</input>
+                                        <input type="checkbox">NC-350_RILs</input>
+                                        <input type="checkbox">seedling_phenotyping_widiv</input>
+                                        <input type="checkbox">Settles_lab</input>
+                                        <input type="checkbox">settles_lab</input>
+                                </div>-->
+                        </td>
 		</tr>
 		<tr>
 			<td>Plate Name</td>
 			<td>
 				<select id="filter_plate_name_options" name="filter_plate_name_options">
-					<option>EQUALS</option>
+					<option selected>EQUALS</option>
 					<option>STARTS WITH</option>
 					<option>ENDS WITH</option>
 					<option>CONTAINS</option>
@@ -101,7 +148,7 @@
 			<td>Packet Name</td>
 			<td>
 				<select id="filter_packet_name_options" name="filter_packet_name_options">
-					<option>EQUALS</option>
+					<option selected>EQUALS</option>
 					<option>STARTS WITH</option>
 					<option>ENDS WITH</option>
 					<option>CONTAINS</option>
@@ -120,7 +167,7 @@
 					<div class="control-group">  
             		<div class="controls">  
               		<select id="aggregate_func">  
-                	<option>COUNT</option>  
+                	<option selected>NONE</option>  
                 	<option>AVERAGE</option>  
                 	<option>STANDARD DEVIATION</option>  
               		</select>  
