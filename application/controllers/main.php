@@ -11,7 +11,7 @@ class Main extends CI_Controller {
 
         $this->load->model('maizedao');
         $this->load->model('queryutils');
-        $this->load->model('excelutils');
+        $this->load->model('csvutils');
     }
 
 	public function index()
@@ -29,10 +29,10 @@ class Main extends CI_Controller {
 		$query = "select * from kernel_3d limit 10";
 
 		// 3) Fetch the results from maize database
-		$maize_results = $this->maizedao->execute_query($query);
+		$maize_results = $this->maizedao->get_query_results($query);
+		log_message('info', "Found " . count($maize_results) . " maize db results for query " . $query);
 
 		// 4) Convert data to CSV format for download
-		$result_header = ""; // TODO : This has to be dynamically calculated
-		$this->excelutils->generate_excel_file($results_header, $maize_results);
+		$this->csvutils->generate_csv_file($maize_results);
 	}
 }

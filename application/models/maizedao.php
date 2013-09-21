@@ -9,11 +9,23 @@ class Maizedao extends CI_Model {
     }
 
     // Generic function that takes a query and fetches results from database
-    function execute_query($query)
+    function get_query_results($query)
     {
-        $output = $this->db->query($query);
-        //print "\nFound " . $output->num_rows() . " results for query " . $query;
-        return $output->result();
+        $query_output = $this->db->query($query);
+
+        // Fetch the query column names/header first
+        $query_results = array();
+        $query_results_header = array();
+        foreach($query_output->list_fields() as $field) {
+              array_push($query_results_header, $field);
+        }
+
+        // Get the actual query results
+        $query_results_values = $query_output->result();
+
+        // Merge the column header and actual database data records
+        array_push($query_results, $query_results_header);
+        return array_merge($query_results, $query_results_values);
     }
 
 }
