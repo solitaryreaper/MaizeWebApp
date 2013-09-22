@@ -11,69 +11,59 @@
 </head>
 <body>
 	<header class="well">
-		<h1 align="center"> MAIZE DATA GENERATOR </h1>
+		<h1 align="center"><strong>MAIZE DATA GENERATOR </strong></h1>
 	</header>
 
 	<div class="container">
-	<form class="form-horizontal" name="maize_data_form" action="http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/load_maize_data" method="post">
+	<form class="form-horizontal" name="maize_data_form" action="http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/load_maize_data" 
+		  onsubmit="return validate_form()" method="post">
 
-	<!-- Contains all the phenotypes and related columns which can be chosen -->
+	<!-- Contains all the phenotypes which can be chosen -->
 	<table class="table table-bordered table-hover table-condensed">
 	<thead>
-		<th>Step 1 <i class="icon-arrow-right"></i> Choose phenotypes</th>
-		<th>Step 2 <i class="icon-arrow-right"></i> Choose phenotype metadata</th>
+		<th colspan="5">Step 1 <i class="icon-arrow-right"></i> Choose phenotypes</th>
 	</thead>
 	<tbody>
 		<tr>
 			<td>
-				<label class="checkbox">
-					<input type="checkbox" id="kernel_3d_cbox"> Kernel 3D
-				</label>
+				<input type="checkbox" id="kernel_3d_cbox" name="kernel_3d_cbox"> Kernel 3D
 			</td>
 			<td>
-						
+				<input type="checkbox" id="predictions_cbox" name="predictions_cbox"> Predictions
 			</td>
+            <td>
+                <input type="checkbox" id="raw_weight_spectra_cbox" name="raw_weight_spectra_cbox"> Raw Weight Spectra
+            </td>
+            <td>
+                <input type="checkbox" id="avg_weight_spectra_cbox" name="avg_weight_spectra_cbox"> Average Weight Spectra
+            </td>
+            <td>
+                <input type="checkbox" id="std_weight_spectra_cbox" name="std_weight_spectra_cbox"> Standard Deviation Weight Spectra
+            </td>                        			
 		</tr>
+	</tbody>
+	</table>
+
+	<!-- Contains all the genotype metadata which can be chosen -->
+	<table class="table table-bordered table-hover table-condensed">
+	<thead>
+		<th colspan="4">Step 2 <i class="icon-arrow-right"></i> Choose genotypes</th>
+	</thead>
+	<tbody>
 		<tr>
 			<td>
-				<label class="checkbox">
-					<input type="checkbox" id="predictions_cbox"> Predictions
-				</label>
+				<input type="checkbox" id="population_type_cbox" name="population_type_cbox"> Population Type
 			</td>
 			<td>
-						
+				<input type="checkbox" id="plate_name_cbox" name="plate_name_cbox"> Plate Name
 			</td>
+            <td>
+                <input type="checkbox" id="packet_name_cbox" name="packet_name_cbox"> Packet Name
+            </td>
+            <td>
+                <input type="checkbox" id="isolate_cbox" name="isolate_cbox"> Isolate
+            </td>
 		</tr>
-                <tr>
-                        <td>
-                                <label class="checkbox">
-                                        <input type="checkbox" id="raw_weight_spectra_cbox"> Raw Weight Spectra
-                                </label>
-                        </td>
-                        <td>
-
-                        </td>
-                </tr>
-                <tr>
-                        <td>
-                                <label class="checkbox">
-                                        <input type="checkbox" id="avg_weight_spectra_cbox"> Average Weight Spectra
-                                </label>
-                        </td>
-                        <td>
-
-                        </td>
-                </tr>
-                <tr>
-                        <td>
-                                <label class="checkbox">
-                                        <input type="checkbox" id="std_weight_spectra_cbox"> Standard Deviation Weight Spectra
-                                </label>
-                        </td>
-                        <td>
-
-                        </td>
-                </tr>						
 	</tbody>
 	</table>
 
@@ -86,13 +76,12 @@
 		<tr>
 			<td>Type</td>
 			<td>
-				<select id="filter_type_options" name="filter_type_options">
-                                        <option selected>EQUALS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
+				<select id="filter_type_option" name="filter_type_option">
+                    <option selected>EQUALS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</option>
 				</select>
 			</td>
-                        <td>
-                                <select id="filter_type_values" name="filter_type_values">
-					<option>NONE</option>
+            <td>
+                <select id="filter_type_value" name="filter_type_value">
 					<option>ALL</option>
 					<option>test</option>
 					<option>calibration</option>
@@ -110,51 +99,31 @@
 					<option>Settles_lab</option>
 					<option>settles_lab</option>
 				</select>
-				<!--
-                                <div>
-                                        <input type="checkbox">NONE</input>
-                                        <input type="checkbox">ALL</input>
-                                        <input type="checkbox">>test</input>
-                                        <input type="checkbox">calibration</input>
-                                        <input type="checkbox">cleaning></input>
-                                        <input type="checkbox">collaborator</input>
-                                        <input type="checkbox">composition_mutants</input>
-                                        <input type="checkbox">dek</input>
-                                        <input type="checkbox">dosage_effect_screen</input>
-                                        <input type="checkbox">IBM_NILs</input>
-                                        <input type="checkbox">IBM_RILs</input>
-                                        <input type="checkbox">maintenance</input>
-                                        <input type="checkbox">NAM_parents</input>
-                                        <input type="checkbox">NC-350_RILs</input>
-                                        <input type="checkbox">seedling_phenotyping_widiv</input>
-                                        <input type="checkbox">Settles_lab</input>
-                                        <input type="checkbox">settles_lab</input>
-                                </div>-->
-                        </td>
+            </td>
 		</tr>
 		<tr>
 			<td>Plate Name</td>
 			<td>
-				<select id="filter_plate_name_options" name="filter_plate_name_options">
+				<select id="filter_plate_option" name="filter_plate_option">
 					<option selected>EQUALS</option>
 					<option>STARTS WITH</option>
 					<option>ENDS WITH</option>
 					<option>CONTAINS</option>
 				</select>
 			</td>
-			<td><input type="text" id="filter_plate_name"></td>
+			<td><input type="text" id="filter_plate_value" name="filter_plate_value"></td>
 		</tr>
 		<tr>
 			<td>Packet Name</td>
 			<td>
-				<select id="filter_packet_name_options" name="filter_packet_name_options">
+				<select id="filter_packet_option" name="filter_packet_option">
 					<option selected>EQUALS</option>
 					<option>STARTS WITH</option>
 					<option>ENDS WITH</option>
 					<option>CONTAINS</option>
 				</select>
 			</td>
-			<td><input type="text" id="filter_packet_name"></td>
+			<td><input type="text" id="filter_packet_value" name="filter_packet_value"></td>
 		</tr>
 	</tbody>
 	</table>
@@ -166,10 +135,10 @@
 				<th>
 					<div class="control-group">  
             		<div class="controls">  
-              		<select id="aggregate_func">  
-                	<option selected>NONE</option>  
-                	<option>AVERAGE</option>  
-                	<option>STANDARD DEVIATION</option>  
+              		<select id="aggregate_func" name="aggregate_func">  
+	                	<option selected>NONE</option>  
+	                	<option>AVERAGE</option>  
+	                	<option>STANDARD DEVIATION</option>  
               		</select>  
             		</div>  
           			</div>
@@ -179,12 +148,39 @@
 
 	<!-- Generate the CSV file -->
 
-	<div class="form-actions">
-		<button type="submit" class="btn btn-large btn-danger">Submit</button>  
+	<div align="center">
+		<button id="csv-generator" type="submit" class="btn btn-large btn-danger"><i class="icon-download-alt"></i> Generate CSV</button>  
     </div>
 
-	</form>
+	</form> <!-- End of form -->
 
-	</div>
+	</div> <!-- End of main div container -->
+
+	<script>
+	function validate_form()
+	{
+		// Atleast one phenotype must be selected
+		var is_phenotype_selected = 
+			$('#kernel_3d_cbox').is(':checked') || $('#predictions_cbox').is(':checked') || $('#raw_weight_spectra_cbox').is(':checked') || 
+			$('#avg_weight_spectra_cbox').is(':checked') || $('#std_weight_spectra_cbox').is(':checked');
+		if(is_phenotype_selected == false) {
+			alert("Please select atleast one phenotype to proceed !!");
+			return false;
+		}
+
+		// Atleast one genotype must be selected
+		var is_genotype_selected = 
+			$('#population_type_cbox').is(':checked') || $('#plate_name_cbox').is(':checked') || 
+			$('#packet_name_cbox').is(':checked') || $('#isolate_cbox').is(':checked');
+		if(is_genotype_selected == false) {
+			alert("Please select atleast one genotype to proceed !!");
+			return false;
+		}
+
+		// Filter value for plate name and packet name should be a valid alphanumeric string
+
+		return true;
+	}
+	</script
 </body>
 </html>
