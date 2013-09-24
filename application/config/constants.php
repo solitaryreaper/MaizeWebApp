@@ -47,6 +47,7 @@ define('PREDICTIONS_TABLE', 'predictions');
 define('WEIGHTS_TABLE', 'weights');
 define('SPECTRA_TABLE', 'spectra');
 define('WEIGHT_SPECTRA_TABLE', 'weights_spectra');
+
 define('KERNEL_TABLE', 'kernels');
 define('PLATE_TABLE', 'kernel_plates');
 define('POPULATION_LINES', 'population_lines');

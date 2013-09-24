@@ -30,7 +30,7 @@ class Main extends CI_Controller {
 		$form_vars = $this->get_form_parameters();
 
 		// 2) Get the dynamic query based on the form parameters
-		$query = $this->get_query($form_vars);
+		$query = $this->queryutils->get_query_from_form_vars($form_vars);
 
 		// 3) Fetch the results from maize database
 		//$maize_results = $this->maizedao->get_query_results($query);
@@ -79,7 +79,9 @@ class Main extends CI_Controller {
 		}
 
 		// get the population type filter
-		$form_vars['filter_type_value'] = $this->input->post('filter_type_value');
+		if($this->input->post('filter_type_value') != "ALL") {
+			$form_vars['filter_type_value'] = $this->input->post('filter_type_value');			
+		}
 
 		// get the plate name filter
 		$filter_plate_value = trim($this->input->post('filter_plate_value'));
@@ -103,11 +105,4 @@ class Main extends CI_Controller {
 		return $form_vars;
 	}
 
-	// Gets the appropriate SQL dynamic query basd on the passed form parameters
-	private function get_query($form_vars)
-	{
-		log_message('info', "Generating dynamic query based on form variables ..");
-		$query = "SELECT * FROM kernel_3d LIMIT 10";
-		return $query;
-	}
 }
