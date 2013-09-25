@@ -98,56 +98,95 @@ class Queryutils extends CI_Model {
     // kernels.
     private function get_phenotype_subquery($form_vars)
     {
-    	$subquery = "SELECT * FROM ";
     	$last_phenotype_alias = null;
 
+	$subquery_body = "";
+	$included_tables_map = array();
     	if(array_key_exists('kernel_3d', $form_vars)) {
-			$subquery .= $form_vars['kernel_3d'] . " k1 ";
+			$subquery_body .= $form_vars['kernel_3d'] . " k1 ";
 			$last_phenotype_alias = "k1";
+			$included_tables_map[KERNEL_3D_TABLE] = "k1";
     	}
-	   	if(array_key_exists('predictions', $form_vars)) {
+ 	if(array_key_exists('predictions', $form_vars)) {
 			if(isset($last_phenotype_alias)) {
-				$subquery .= " FULL OUTER JOIN ";
+				$subquery_body .= " FULL OUTER JOIN ";
 			}    		
-			$subquery .= $form_vars['predictions'] . " k2 ";
+			$subquery_body .= $form_vars['predictions'] . " k2 ";
 			if(isset($last_phenotype_alias)) {
-				$subquery .= " ON " . $last_phenotype_alias . ".kernel_id = k2.kernel_id ";
+				$subquery_body .= " ON " . $last_phenotype_alias . ".kernel_id = k2.kernel_id ";
 			}
 			$last_phenotype_alias = "k2";		
+			$included_tables_map[PREDICTIONS_TABLE] = "k2";
     	}
     	if(array_key_exists('raw_weight_spectra', $form_vars)) {
 			if(isset($last_phenotype_alias)) {
-				$subquery .= " FULL OUTER JOIN ";
+				$subquery_body .= " FULL OUTER JOIN ";
 			}    		
-			$subquery .= $form_vars['raw_weight_spectra'] . " k3 "; 
+			$subquery_body .= $form_vars['raw_weight_spectra'] . " k3 "; 
 			if(isset($last_phenotype_alias)) {
-				$subquery .= " ON " . $last_phenotype_alias . ".kernel_id = k3.kernel_id ";
+				$subquery_body .= " ON " . $last_phenotype_alias . ".kernel_id = k3.kernel_id ";
 			}
-			$last_phenotype_alias = "k3";					
+			$last_phenotype_alias = "k3";		
+			$included_tables_map[WEIGHT_SPECTRA_TABLE] = "k3";			
     	}
     	if(array_key_exists('avg_weight_spectra', $form_vars)) {
 			if(isset($last_phenotype_alias)) {
-				$subquery .= " FULL OUTER JOIN ";
+				$subquery_body .= " FULL OUTER JOIN ";
 			}    		
-			$subquery .= $form_vars['avg_weight_spectra'] . " k4 "; 
+			$subquery_body .= $form_vars['avg_weight_spectra'] . " k4 "; 
 			if(isset($last_phenotype_alias)) {
-				$subquery .= " ON (" . $last_phenotype_alias . ".kernel_id = k4.kernel_id ";
+				$subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k4.kernel_id ";
 			}
-			$last_phenotype_alias = "k4";					
+			$last_phenotype_alias = "k4";
+			$included_tables_map[WEIGHT_SPECTRA_AVG_TABLE] = "k4";					
     	}
     	if(array_key_exists('std_weight_spectra', $form_vars)) {
 			if(isset($last_phenotype_alias)) {
-				$subquery .= " FULL OUTER JOIN ";
+				$subquery_body .= " FULL OUTER JOIN ";
 			}    		
-			$subquery .= $form_vars['std_weight_spectra'] . " k5 "; 
+			$subquery_body .= $form_vars['std_weight_spectra'] . " k5 "; 
 			if(isset($last_phenotype_alias)) {
-				$subquery .= " ON " . $last_phenotype_alias . ".kernel_id = k5.kernel_id ";
+				$subquery_body .= " ON " . $last_phenotype_alias . ".kernel_id = k5.kernel_id ";
 			}
-			$last_phenotype_alias = "k5";					
+			$last_phenotype_alias = "k5";
+                        $included_tables_map[WEIGHT_SPECTRA_STD_TABLE] = "k5";					
     	}
 
+	$subquery_select_clause = "SELECT ";
+	foreach($included_tables_map as $table_name=>$table_prefix) {
+		$subquery_select_clause .= $this->get_fact_columns_for_phenotype($table_name, $table_prefix) . " , ";
+        }
+	$subquery_select_clause .= array_values($included_tables_map)[0] ".kernel_id";
+
+        $subquery = $subquery_select_clause . " " . $subquery_body;
      	log_message('info', "Phenotype subquery generated : " . $subquery);
     	return $subquery;
+    }
+
+    // Get all the measurement data columns for this phenotype
+    private function get_fact_columns_for_phenotype($phenotype_table, $phenotype_query_prefix)
+    {
+	$phenotype_select_query = 
+		"SELECT CONCAT(" . "'". $phenotype_query_prefix . "' , column_name) as col_name" . 
+		"FROM information_schema.columns " .
+		"WHERE table_catalog='maize' AND table_name = '" . $phenotype_table  ."' AND".
+      		"data_type IN ('integer', 'double precision') AND". 
+      		"column_name NOT IN ('id', 'kernel_id')".
+		"ORDER BY ordinal_position";
+	log_message('info', "Query fired to get measurement data " . $phenotype_select_query);
+
+        // get a comma separated list of field values
+	$fields_as_select_clause = "";
+	$query_output = $this->db->query($phenotype_select_query);
+	foreach($query_output->result() as $field) {
+            $fields_as_select_clause .= $field . " , ";  
+        }	
+
+        $fields_as_select_clause = trim($fields_as_select_clause);
+        $fields_as_select_clause = rtrim($fields_as_select_clause, ',')
+
+	log_message('info', "Comma separated measurement data list : " . $fields_as_select_clause);
+	return $fields_as_select_clause;
     }
  
  }
