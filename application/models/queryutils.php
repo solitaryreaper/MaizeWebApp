@@ -185,7 +185,8 @@ class Queryutils extends CI_Model {
         $fields_as_select_clause = trim($fields_as_select_clause);
         $fields_as_select_clause = rtrim($fields_as_select_clause, ',')
 
-	log_message('info', "Comma separated measurement data list : " . $fields_as_select_clause);
+	log_message('info', "Comma separated phenotype measurement data list : " . $fields_as_select_clause);
+    	$subquery = "SELECT * FROM ";
 	return $fields_as_select_clause;
     }
  
