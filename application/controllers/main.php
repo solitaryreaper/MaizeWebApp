@@ -33,11 +33,11 @@ class Main extends CI_Controller {
 		$query = $this->queryutils->get_query_from_form_vars($form_vars);
 
 		// 3) Fetch the results from maize database
-		//$maize_results = $this->maizedao->get_query_results($query);
-		//log_message('info', "Found " . count($maize_results) . " maize db results for query " . $query);
+		$maize_results = $this->maizedao->get_query_results($query);
+		log_message('info', "Found " . count($maize_results) . " maize db results for query " . $query);
 
 		// 4) Convert data to CSV format for download
-		//$this->csvutils->generate_csv_file($maize_results);
+		$this->csvutils->generate_csv_file($maize_results);
 	}
 
 	// Extracts the form parameters from
