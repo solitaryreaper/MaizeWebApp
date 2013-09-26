@@ -47,6 +47,10 @@ class Main extends CI_Controller {
 
 		$form_vars = array();
 
+
+		// get the report type chosen
+		$form_vars['report_type'] = $this->input->post('report_type');
+
 		// get the phenotypes selected and map them to their database tables
 		if($this->input->post('kernel_3d_cbox') == "on") {
 			$form_vars['kernel_3d'] = KERNEL_3D_TABLE;
@@ -54,29 +58,31 @@ class Main extends CI_Controller {
 		if($this->input->post('predictions_cbox') == "on") {
 			$form_vars['predictions'] = PREDICTIONS_TABLE;
 		}
+		if($this->input->post('root_tip_measurements_cbox') == "on") {
+			$form_vars['root_tip_measurements'] = ROOT_TIP_MEASUREMENTS_TABLE;
+		}		
 		if($this->input->post('raw_weight_spectra_cbox') == "on") {
-			$form_vars['raw_weight_spectra'] = WEIGHT_SPECTRA_TABLE;
+			$form_vars['raw_weight_spectra'] = RAW_WEIGHT_SPECTRA_TABLE;
 		}
 		if($this->input->post('avg_weight_spectra_cbox') == "on") {
-			$form_vars['avg_weight_spectra'] = WEIGHT_SPECTRA_TABLE;
+			$form_vars['avg_weight_spectra'] = AVG_WEIGHT_SPECTRA_TABLE;
 		}
 		if($this->input->post('std_weight_spectra_cbox') == "on") {
-			$form_vars['std_weight_spectra'] = WEIGHT_SPECTRA_TABLE;
+			$form_vars['std_weight_spectra'] = STD_WEIGHT_SPECTRA_TABLE;
 		}
 
-		// get the genotypes to show and map to their actual column names 
-		if($this->input->post('population_type_cbox') == "on") {
-			$form_vars['population_type'] = 'type';
-		}
-		if($this->input->post('plate_name_cbox') == "on") {
-			$form_vars['plate_name'] = 'plate_name';
-		}
-		if($this->input->post('packet_name_cbox') == "on") {
-			$form_vars['packet_name'] = 'packet_name';
-		}
-		if($this->input->post('isolate_cbox') == "on") {
-			$form_vars['isolate'] = 'isolate';
-		}
+		// get the phenotypes metadata to show
+		// HACK : pheontype metadata has been encoded as <metadata_name>_meta_cbox to easily 
+		// identify the metadata variables in the the form array.
+		foreach($this->input->post() as $form_key=>$form_value) {
+			if(strpos($form_key, "_meta_cbox") > 0) {
+				if($this->input->post($form_key) == "on") {
+					// strip off the marker to indicate phenotype metadata
+					$new_key = str_replace("_meta_cbox", "", $form_key);
+					$form_vars[$new_key] = $new_key;
+				}
+			}
+		} 
 
 		// get the population type filter
 		if($this->input->post('filter_type_value') != "ALL") {
@@ -97,10 +103,7 @@ class Main extends CI_Controller {
 			$form_vars['filter_packet_value'] = $filter_packet_value;
 		}		
 
-		// get the data aggregation mode chosen
-		$form_vars['aggregation_mode'] = $this->input->post('aggregate_func');
-
-		log_message('info', "Extracted form variables : " . print_r($form_vars));
+		//log_message('info', "Extracted form variables : " . print_r($form_vars));
 
 		return $form_vars;
 	}

@@ -42,12 +42,15 @@ define('CSS',URL.'assets/css/');
 define('JS',URL.'assets/js/');
 
 // Application specific constants
+// Phenotype measurement data tables
 define('KERNEL_3D_TABLE', 'kernel_3d');
 define('PREDICTIONS_TABLE', 'predictions');
-define('WEIGHTS_TABLE', 'weights');
-define('SPECTRA_TABLE', 'spectra');
-define('WEIGHT_SPECTRA_TABLE', 'weights_spectra');
+define('ROOT_TIP_MEASUREMENTS_TABLE', 'root_tip_measurements');
+define('RAW_WEIGHT_SPECTRA_TABLE', 'raw_weights_spectra_vw');
+define('AVG_WEIGHT_SPECTRA_TABLE', 'averageweightspectra_vw');
+define('STD_WEIGHT_SPECTRA_TABLE', 'standarddeviationweightspectra_vw');
 
+// Phenotype metadata tables
 define('KERNEL_TABLE', 'kernels');
 define('PLATE_TABLE', 'kernel_plates');
 define('POPULATION_LINES', 'population_lines');

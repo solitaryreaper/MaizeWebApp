@@ -17,7 +17,7 @@ class Maizedao extends CI_Model {
         $query_results = array();
         $query_results_header = array();
         foreach($query_output->list_fields() as $field) {
-              array_push($query_results_header, $field);
+            array_push($query_results_header, $field);
         }
 
         // Get the actual query results
