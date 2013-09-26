@@ -34,10 +34,18 @@ class Main extends CI_Controller {
 
 		// 3) Fetch the results from maize database
 		$maize_results = $this->maizedao->get_query_results($query);
-		log_message('info', "Found " . count($maize_results) . " maize db results for query " . $query);
+		$num_results = count($maize_results);
+		log_message('info', "Found " . $num_results . " maize db results for query " . $query);
 
-		// 4) Convert data to CSV format for download
-		$this->csvutils->generate_csv_file($maize_results);
+		// 4) Show the results summary. TODO : This is not working.
+		//$results_data = array("count" => $num_results, "query" => $query);
+		//$this->load->view('results', $results_data);
+		//log_message('info', "Loading results page ..");
+
+		// 5) Convert data to CSV format for download, only if number of db rows generated is non-zero
+		if($num_results > 0) {
+			$this->csvutils->generate_csv_file($maize_results);			
+		}		
 	}
 
 	// Extracts the form parameters from

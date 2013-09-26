@@ -25,14 +25,15 @@ class Queryutils extends CI_Model {
     	parent::__construct();
     }
 
-    // Dynamically generates the query form the form parameters
+    // Dynamically generates the query form the form parameters.
     public function get_query_from_form_vars($form_vars)
     {
     	$query = "";
-    	$phenotype_query = $this->get_phenotype_subquery($form_vars);
+    	$phenotype_measurements_subquery = $this->get_phenotype_subquery($form_vars);
     	$phenotype_meta_subquery = $this->get_phenotype_meta_subquery($form_vars);
-    	$query .= "SELECT * FROM (" . $phenotype_meta_subquery . ") genotypes LEFT OUTER JOIN (" . 
-		$phenotype_query . ") phenotypes ON genotypes.kernel_id = phenotypes.kernel_id";
+    	$query .= "SELECT phenotypes_metadata.*, phenotypes_measurements.*  FROM (" . 
+    		       $phenotype_measurements_subquery . " LIMIT 1000) phenotypes_measurements JOIN (" . 
+				   $phenotype_meta_subquery . ") phenotypes_metadata ON phenotypes_measurements.kernel_id1 = phenotypes_metadata.kernel_id";
 
 		log_message('info', "Final query : " . $query);
 
@@ -178,8 +179,11 @@ class Queryutils extends CI_Model {
 		foreach($included_tables_map as $table_name=>$table_prefix) {
 			$subquery_select_clause .= $this->get_fact_columns_for_phenotype($table_name, $table_prefix) . " , ";
         }
+        log_message('info', "Phenotype subquery body : " . $subquery_body);
+
         $included_tables_aliases = array_values($included_tables_map);
-		$subquery_select_clause .= $included_tables_aliases[0] . ".kernel_id";
+        log_message('info', "Aliases : " . $included_tables_aliases[0]);
+		$subquery_select_clause .= $included_tables_aliases[0] . ".kernel_id AS kernel_id1";
 
         $subquery = $subquery_select_clause . " FROM " . $subquery_body;
      	log_message('info', "Phenotype subquery generated : " . $subquery);
