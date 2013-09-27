@@ -46,22 +46,22 @@
 	<tbody>
 		<tr>
 			<td>
-				<input type="checkbox" id="kernel_3d_cbox" name="kernel_3d_cbox"> Kernel 3D
+				<input type="checkbox" id="kernel_3d_phenotype_cbox" name="kernel_3d_phenotype_cbox"> Kernel 3D
 			</td>
 			<td>
-				<input type="checkbox" id="predictions_cbox" name="predictions_cbox"> Predictions
+				<input type="checkbox" id="predictions_phenotype_cbox" name="predictions_phenotype_cbox"> Predictions
 			</td>
 			<td>
-				<input type="checkbox" id="root_tip_cbox" name="root_tip_cbox"> Root Tip Measurements
+				<input type="checkbox" id="root_tip_phenotype_cbox" name="root_tip_phenotype_cbox"> Root Tip Measurements
 			</td>			
             <td>
-                <input type="checkbox" id="raw_weight_spectra_cbox" name="raw_weight_spectra_cbox"> Raw Weight Spectra
+                <input type="checkbox" id="raw_weight_spectra_phenotype_cbox" name="raw_weight_spectra_phenotype_cbox"> Raw Weight Spectra
             </td>
             <td>
-                <input type="checkbox" id="avg_weight_spectra_cbox" name="avg_weight_spectra_cbox"> Average Weight Spectra
+                <input type="checkbox" id="avg_weight_spectra_phenotype_cbox" name="avg_weight_spectra_phenotype_cbox"> Average Weight Spectra
             </td>
             <td>
-                <input type="checkbox" id="std_weight_spectra_cbox" name="std_weight_spectra_cbox"> Standard Deviation Weight Spectra
+                <input type="checkbox" id="std_weight_spectra_phenotype_cbox" name="std_weight_spectra_phenotype_cbox"> Standard Deviation Weight Spectra
             </td>                        			
 		</tr>
 	</tbody>
@@ -235,6 +235,46 @@
 	</div> <!-- End of main div container -->
 
 	<script>
+
+	// Dynamically change form based on the select report type value chosen in dropdown
+	$( "#report_type" ).change(function() {
+		var report_type = $(this).val();
+		change_phenotype_display(report_type);
+		change_phenotype_metadata_display(report_type);
+	});
+
+	// Modifies the display behaviour of phenotype checkboxes based on report type.
+	function change_phenotype_display(report_type)
+	{
+		var phenotype_tags = $("[id$='_phenotype_cbox']");
+		if(report_type == "") {
+			phenotype_tags.parent().show();
+		}
+		else if(report_type == "Raw Weight/Spectra") {
+			phenotype_tags.parent().hide(); // Hide all the tags first
+			$("#raw_weight_spectra_phenotype_cbox").parent().show(); // Show relevant tags now
+		}
+		else {
+			phenotype_tags.parent().show(); // Show all the tags first
+			$("#raw_weight_spectra_phenotype_cbox").parent().hide(); // Hide relevant tags now
+		}
+	}
+
+	// Modifies the display behaviour of phenotype metadata checkboxes based on report type.
+	function change_phenotype_metadata_display(report_type)
+	{
+		var phenotype_tags = $("[id$='_meta_cbox']");
+		if(report_type == "" || report_type == "Raw Weight/Spectra") {
+			phenotype_tags.parent().show(); // Show all the tags
+		}
+		else {
+			phenotype_tags.parent().hide(); // Hide all the tags first
+
+			// Show relevant tags now
+			$("#population_type_meta_cbox").parent().show(); 
+			$("#isolate_meta_cbox").parent().show(); 
+		}
+	}
 
 	// Validates the form
 	function validate_form()

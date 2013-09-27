@@ -33,19 +33,19 @@ class Main extends CI_Controller {
 		$query = $this->queryutils->get_query_from_form_vars($form_vars);
 
 		// 3) Fetch the results from maize database
-		$maize_results = $this->maizedao->get_query_results($query);
-		$num_results = count($maize_results);
-		log_message('info', "Found " . $num_results . " maize db results for query " . $query);
+		//$maize_results = $this->maizedao->get_query_results($query);
+		//$num_results = count($maize_results);
+		//log_message('info', "Found " . $num_results . " maize db results for query " . $query);
 
 		// 4) Show the results summary. TODO : This is not working.
-		$results_data = array("count" => $num_results, "query" => $query);
-		$this->load->view('results', $results_data);
-		log_message('info', "Loading results page ..");
+		//$results_data = array("count" => $num_results, "query" => $query);
+		//$this->load->view('results', $results_data);
+		//log_message('info', "Loading results page ..");
 
 		// 5) Convert data to CSV format for download, only if number of db rows generated is non-zero
-		if($num_results > 0) {
+		//if($num_results > 0) {
 			//$this->csvutils->generate_csv_file($maize_results);			
-		}		
+		//}		
 	}
 
 	// Extracts the form parameters from
@@ -59,22 +59,22 @@ class Main extends CI_Controller {
 		$form_vars['report_type'] = $this->input->post('report_type');
 
 		// get the phenotypes selected and map them to their database tables
-		if($this->input->post('kernel_3d_cbox') == "on") {
+		if($this->input->post('kernel_3d_phenotype_cbox') == "on") {
 			$form_vars['kernel_3d'] = KERNEL_3D_TABLE;
 		}
-		if($this->input->post('predictions_cbox') == "on") {
+		if($this->input->post('predictions_phenotype_cbox') == "on") {
 			$form_vars['predictions'] = PREDICTIONS_TABLE;
 		}
-		if($this->input->post('root_tip_measurements_cbox') == "on") {
+		if($this->input->post('root_tip_measurements_phenotype_cbox') == "on") {
 			$form_vars['root_tip_measurements'] = ROOT_TIP_MEASUREMENTS_TABLE;
 		}		
-		if($this->input->post('raw_weight_spectra_cbox') == "on") {
+		if($this->input->post('raw_weight_spectra_phenotype_cbox') == "on") {
 			$form_vars['raw_weight_spectra'] = RAW_WEIGHT_SPECTRA_TABLE;
 		}
-		if($this->input->post('avg_weight_spectra_cbox') == "on") {
+		if($this->input->post('avg_weight_spectra_phenotype_cbox') == "on") {
 			$form_vars['avg_weight_spectra'] = AVG_WEIGHT_SPECTRA_TABLE;
 		}
-		if($this->input->post('std_weight_spectra_cbox') == "on") {
+		if($this->input->post('std_weight_spectra_phenotype_cbox') == "on") {
 			$form_vars['std_weight_spectra'] = STD_WEIGHT_SPECTRA_TABLE;
 		}
 
