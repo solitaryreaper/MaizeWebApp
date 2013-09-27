@@ -235,6 +235,8 @@
 	</div> <!-- End of main div container -->
 
 	<script>
+
+	// Validates the form
 	function validate_form()
 	{
 		// Atleast one phenotype must be selected
@@ -263,6 +265,25 @@
 
 		return true;
 	}
+
+	// Displays appropriate phenotypes based on the report chosen
+	function display_relevant_phenotypes()
+	{
+
+	}
+
+	// Displays appropriate phenotype metadata properties based on the report chosen
+	function display_relevant_phenotype_metadata()
+	{
+
+	}
+
+	// Displays the relevant constrains/filters applicable based on the report chosen
+	function display_relevant_filters()
+	{
+
+	}
+
 	</script
 </body>
 </html>

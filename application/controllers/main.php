@@ -38,13 +38,13 @@ class Main extends CI_Controller {
 		log_message('info', "Found " . $num_results . " maize db results for query " . $query);
 
 		// 4) Show the results summary. TODO : This is not working.
-		//$results_data = array("count" => $num_results, "query" => $query);
-		//$this->load->view('results', $results_data);
-		//log_message('info', "Loading results page ..");
+		$results_data = array("count" => $num_results, "query" => $query);
+		$this->load->view('results', $results_data);
+		log_message('info', "Loading results page ..");
 
 		// 5) Convert data to CSV format for download, only if number of db rows generated is non-zero
 		if($num_results > 0) {
-			$this->csvutils->generate_csv_file($maize_results);			
+			//$this->csvutils->generate_csv_file($maize_results);			
 		}		
 	}
 
@@ -54,7 +54,6 @@ class Main extends CI_Controller {
 		log_message('info', "Extracting form variables ..");
 
 		$form_vars = array();
-
 
 		// get the report type chosen
 		$form_vars['report_type'] = $this->input->post('report_type');
