@@ -15,8 +15,12 @@
 	</header>
 
 	<div class="container">
-	<form class="form-horizontal" name="maize_data_form" action="http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/load_maize_data" 
+	<form class="form-horizontal" id="maize_data_form" name="maize_data_form" action="http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/load_maize_data" 
 		  onsubmit="return validate_form()" method="post">
+
+	<div id="results_loading" style='display: none;'>
+		<img src="http://www.mytreedb.com/uploads/mytreedb/loader/ajax_loader_green_512.gif">
+	</div>
 
 	<!-- Report type chosen -->
 	<table class="table table-bordered table-condensed">
@@ -236,6 +240,26 @@
 
 	<script>
 
+	// Submit the form and show a loading gif till the results are fetched
+	/*
+	$('#maize_data_form').submit(function() {
+		var is_validated = validate_form();
+		if(is_validated == false) {
+			return false;
+		}
+
+	    $('#results_loading').show();
+	    alert("posting data ..");
+	    $.post('http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/load_maize_data', function() {
+	    	alert("Inside hide function ..");
+	        $('#results_loading').hide();
+	    });
+
+	    alert("Outside hide function ..");
+	    return false;
+	});
+	*/
+
 	// Dynamically change form based on the select report type value chosen in dropdown
 	$( "#report_type" ).change(function() {
 		var report_type = $(this).val();
@@ -247,6 +271,7 @@
 	function change_phenotype_display(report_type)
 	{
 		var phenotype_tags = $("[id$='_phenotype_cbox']");
+		phenotype_tags.removeAttr('checked');
 		if(report_type == "") {
 			phenotype_tags.parent().show();
 		}
@@ -263,12 +288,13 @@
 	// Modifies the display behaviour of phenotype metadata checkboxes based on report type.
 	function change_phenotype_metadata_display(report_type)
 	{
-		var phenotype_tags = $("[id$='_meta_cbox']");
-		if(report_type == "" || report_type == "Raw Weight/Spectra") {
-			phenotype_tags.parent().show(); // Show all the tags
+		var phenotype_metadata_tags = $("[id$='_meta_cbox']");
+		phenotype_metadata_tags.removeAttr('checked');		
+		if(report_type == "" || report_type == "Raw Weight/Spectra" || report_type == "Raw Phenotypes") {
+			phenotype_metadata_tags.parent().show(); // Show all the tags
 		}
 		else {
-			phenotype_tags.parent().hide(); // Hide all the tags first
+			phenotype_metadata_tags.parent().hide(); // Hide all the tags first
 
 			// Show relevant tags now
 			$("#population_type_meta_cbox").parent().show(); 
@@ -279,51 +305,41 @@
 	// Validates the form
 	function validate_form()
 	{
+		// Check if a report type is chosen
+		var report_type = $("#report_type").val();
+		if(report_type == "") {
+			alert("Please choose a report type before submitting the form !!");
+			return false;
+		}
+
 		// Atleast one phenotype must be selected
-		/*
-		var is_phenotype_selected = 
-			$('#kernel_3d_cbox').is(':checked') || $('#predictions_cbox').is(':checked') || $('#raw_weight_spectra_cbox').is(':checked') || 
-			$('#avg_weight_spectra_cbox').is(':checked') || $('#std_weight_spectra_cbox').is(':checked');
-		if(is_phenotype_selected == false) {
+		var is_atleast_one_phenotype_selected = false;
+		$("[id$='_phenotype_cbox']").each(function() {
+			if($(this).is(':checked') == true) {
+				is_atleast_one_phenotype_selected =  true;
+			}
+		});
+		if(is_atleast_one_phenotype_selected == false) {
 			alert("Please select atleast one phenotype to proceed !!");
 			return false;
 		}
-		*/
 
 		// Atleast one genotype must be selected
-		/*
-		var is_genotype_selected = 
-			$('#population_type_cbox').is(':checked') || $('#plate_name_cbox').is(':checked') || 
-			$('#packet_name_cbox').is(':checked') || $('#isolate_cbox').is(':checked');
-		if(is_genotype_selected == false) {
-			alert("Please select atleast one genotype to proceed !!");
+		var is_atleast_one_phenotype_metadata_selected = false;
+		$("[id$='_meta_cbox']").each(function() {
+			if($(this).is(':checked') == true) {
+				is_atleast_one_phenotype_metadata_selected = true;
+			}
+		});
+		if(is_atleast_one_phenotype_metadata_selected == false) {
+			alert("Please select atleast one phenotype_metadata to proceed !!");
 			return false;
 		}
-		*/
-
-		// Filter value for plate name and packet name should be a valid alphanumeric string
 
 		return true;
 	}
 
-	// Displays appropriate phenotypes based on the report chosen
-	function display_relevant_phenotypes()
-	{
-
-	}
-
-	// Displays appropriate phenotype metadata properties based on the report chosen
-	function display_relevant_phenotype_metadata()
-	{
-
-	}
-
-	// Displays the relevant constrains/filters applicable based on the report chosen
-	function display_relevant_filters()
-	{
-
-	}
-
 	</script
 </body>
+
 </html>
