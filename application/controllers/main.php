@@ -26,7 +26,6 @@ class Main extends CI_Controller {
 	// database and then upload it as a CSV file for downloading.
 	public function load_maize_data()
 	{
-		log_message('info', "POST does work !!");
 		// 1) Extract the form parameters here. These would be used to dynamically generate the query
 		$form_vars = $this->get_form_parameters();
 		log_message('info', $form_vars);
@@ -40,13 +39,13 @@ class Main extends CI_Controller {
 		log_message('info', "Found " . $num_results . " maize db results for query " . $query);
 
 		// 4) Show the results summary. TODO : This is not working.
-		$results_data = array("count" => $num_results, "query" => $query);
-		$this->load->view('results', $results_data);
-		log_message('info', "Loading results page ..");
+		//$results_data = array("count" => $num_results, "query" => $query);
+		//$this->load->view('results', $results_data);
+		//log_message('info', "Loading results page ..");
 
 		// 5) Convert data to CSV format for download, only if number of db rows generated is non-zero
 		if($num_results > 0) {
-			$this->csvutils->generate_csv_file($maize_results);			
+			$this->csvutils->generate_csv_file($maize_results, $form_vars['report_type']);			
 		}		
 	}
 

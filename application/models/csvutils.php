@@ -9,10 +9,11 @@ class Csvutils extends CI_Model {
     }
 
     // Generic function that generates a CSV file out of database results
-    function generate_csv_file($db_results)
+    function generate_csv_file($db_results, $report_type)
     {
+        $file_name = "maize_results_" . strtolower($report_type) . ".csv";
         header("Content-type: text/csv; charset=utf-8");
-        header("Content-Disposition: attachment; filename=maize_results.csv");
+        header("Content-Disposition: attachment; filename=" . $file_name);
 
         // This ensures that the csv file is offered for download at browser client
         $output = fopen("php://output", "w");
@@ -23,6 +24,7 @@ class Csvutils extends CI_Model {
             }
             fputcsv($output, $row);
         }
+
         fclose($output);
     }
 

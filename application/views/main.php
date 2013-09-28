@@ -18,9 +18,11 @@
 	<form class="form-horizontal" id="maize_data_form" name="maize_data_form" action="http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/load_maize_data" 
 		  onsubmit="return validate_form()" method="post">
 
+	<!--
 	<div id="results_loading" style='display: none;'>
 		<img src="http://www.mytreedb.com/uploads/mytreedb/loader/ajax_loader_green_512.gif">
 	</div>
+	-->
 
 	<!-- Report type chosen -->
 	<table class="table table-bordered table-condensed">
