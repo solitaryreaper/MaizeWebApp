@@ -28,7 +28,6 @@ class Main extends CI_Controller {
 	{
 		// 1) Extract the form parameters here. These would be used to dynamically generate the query
 		$form_vars = $this->get_form_parameters();
-		log_message('info', $form_vars);
 
 		// 2) Get the dynamic query based on the form parameters
 		$query = $this->queryutils->get_query_from_form_vars($form_vars);
@@ -43,10 +42,15 @@ class Main extends CI_Controller {
 		//$this->load->view('results', $results_data);
 		//log_message('info', "Loading results page ..");
 
-		// 5) Convert data to CSV format for download, only if number of db rows generated is non-zero
+
+		// 5) Drop any temporary tables created for intermediate processing
+		$this->maizedao->drop_temporary_tables();
+
+		// 6) Convert data to CSV format for download, only if number of db rows generated is non-zero
 		if($num_results > 0) {
 			$this->csvutils->generate_csv_file($maize_results, $form_vars['report_type']);			
-		}		
+		}
+
 	}
 
 	// Extracts the form parameters from

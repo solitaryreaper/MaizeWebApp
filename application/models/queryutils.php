@@ -33,17 +33,15 @@ class Queryutils extends CI_Model {
     	$phenotype_meta_subquery = $this->get_phenotype_meta_subquery($form_vars);
     	$phenotype_query_select_clause = 
     		$this->get_phenotype_query_select_clause($phenotype_meta_subquery, $phenotype_measurements_subquery, $form_vars);
-    	$phenotype_query_group_by_clause = " GROUP BY " .
-    		$this->get_phenotype_query_group_by_clause($phenotype_meta_subquery, $form_vars);
-    	$phenotype_query_order_by_clause = " ORDER BY " .
-    		$this->get_phenotype_query_group_by_clause($phenotype_meta_subquery, $form_vars);    		
+
+    	$phenotype_query_group_by_clause = $this->get_phenotype_query_group_by_clause($phenotype_meta_subquery, $form_vars);
 
     	$query .= "SELECT DISTINCT " . $phenotype_query_select_clause . " FROM (" . 
     		       $phenotype_measurements_subquery . 
     		       " ) phenotypes_measurements JOIN (" . 
 				   $phenotype_meta_subquery . 
 				   ") phenotypes_metadata ON phenotypes_measurements.kernel_id1 = phenotypes_metadata.kernel_id " .
-				   $phenotype_query_group_by_clause . " " . $phenotype_query_order_by_clause;
+				   $phenotype_query_group_by_clause;
 
 		log_message('info', "Final query : " . $query);
 
@@ -120,7 +118,7 @@ class Queryutils extends CI_Model {
 
     	$phenotype_query_group_by_clause = " ";
     	if($this->is_aggregate_function_report($form_vars)) {
-    		$phenotype_query_group_by_clause .= " ";
+    		$phenotype_query_group_by_clause .= " GROUP BY ";
     		$excluded_columns = array("kernel_id", "kernel_id1");
     		$phenotype_query_group_by_clause .= 
     			$this->get_query_display_columns($phenotype_metadata_query, 'phenotypes_metadata.', '', $excluded_columns, 'GROUP');
@@ -261,7 +259,7 @@ class Queryutils extends CI_Model {
 			if(isset($last_phenotype_alias)) {
 				$subquery_body .= " FULL OUTER JOIN ";
 			}    		
-			$subquery_body .= $form_vars['raw_weight_spectra'] . " k4 "; 
+			$subquery_body .= $this->get_phenotype_table($form_vars['raw_weight_spectra']) . " k4 "; 
 			if(isset($last_phenotype_alias)) {
 				$subquery_body .= " ON " . $last_phenotype_alias . ".kernel_id = k4.kernel_id ";
 			}
@@ -272,7 +270,7 @@ class Queryutils extends CI_Model {
 			if(isset($last_phenotype_alias)) {
 				$subquery_body .= " FULL OUTER JOIN ";
 			}    		
-			$subquery_body .= $form_vars['avg_weight_spectra'] . " k5 "; 
+			$subquery_body .= $this->get_phenotype_table($form_vars['avg_weight_spectra']) . " k5 "; 
 			if(isset($last_phenotype_alias)) {
 				$subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k5.kernel_id ";
 			}
@@ -283,7 +281,7 @@ class Queryutils extends CI_Model {
 			if(isset($last_phenotype_alias)) {
 				$subquery_body .= " FULL OUTER JOIN ";
 			}    		
-			$subquery_body .= $form_vars['std_weight_spectra'] . " k6 "; 
+			$subquery_body .= $this->get_phenotype_table($form_vars['std_weight_spectra']) . " k6 "; 
 			if(isset($last_phenotype_alias)) {
 				$subquery_body .= " ON " . $last_phenotype_alias . ".kernel_id = k6.kernel_id ";
 			}
@@ -309,28 +307,49 @@ class Queryutils extends CI_Model {
     // Get all the measurement data columns for this phenotype
     private function get_fact_columns_for_phenotype($phenotype_table, $phenotype_query_prefix)
     {
-	$phenotype_select_query = 
-		" SELECT CONCAT(" . "'". $phenotype_query_prefix . ".' , column_name) as col_name " . 
-		" FROM information_schema.columns " .
-		" WHERE table_catalog='maize' AND table_name = '" . $phenotype_table  ."' AND ".
-      		" data_type IN ('integer', 'double precision') AND ". 
-      		" column_name NOT IN ('id', 'kernel_id') ".
-		" ORDER BY ordinal_position ";
-	log_message('info', "Query fired to get measurement data " . $phenotype_select_query);
+		$phenotype_select_query = 
+			" SELECT ('" . $phenotype_query_prefix . ".'". " ||  column_name ) as col_name " . 
+			" FROM information_schema.columns " .
+			" WHERE table_catalog='maize' AND table_name = '" . $phenotype_table  ."' AND ".
+	      		" data_type IN ('integer', 'double precision') AND ". 
+	      		" column_name NOT IN ('id', 'kernel_id') ".
+			" ORDER BY ordinal_position ";
+		log_message('info', "Query fired to get measurement data " . $phenotype_select_query);
 
-    // get a comma separated list of field values
-	$fields_as_select_clause = "";
-	$query_output = $this->db->query($phenotype_select_query);
-	foreach($query_output->result() as $row) {
-        $fields_as_select_clause .= $row->col_name . " , ";  
-    }	
+	    // get a comma separated list of field values
+		$fields_as_select_clause = "";
+		$query_output = $this->db->query($phenotype_select_query);
+		foreach($query_output->result() as $row) {
+	        $fields_as_select_clause .= $row->col_name . " , ";  
+	    }	
 
-    $fields_as_select_clause = trim($fields_as_select_clause);
-    $fields_as_select_clause = rtrim($fields_as_select_clause, ',');
+	    $fields_as_select_clause = trim($fields_as_select_clause);
+	    $fields_as_select_clause = rtrim($fields_as_select_clause, ',');
 
-	log_message('info', "Comma separated phenotype measurement data list : " . $fields_as_select_clause);
+		log_message('info', "Comma separated phenotype measurement data list : " . $fields_as_select_clause);
 
-	return $fields_as_select_clause;
+		return $fields_as_select_clause;
     }
  
+ 	// If the phenotype data resides in a view, stages it in a temporary table and returns
+ 	// its identifier. Using temporary tables instead of on-the-fly view computation leads
+ 	// to faster turnaround times for the queries.
+ 	private function get_phenotype_table($phenotype_db_object_name)
+ 	{
+		$phenotype_table = $phenotype_db_object_name;
+		if(substr($phenotype_db_object_name, -strlen("_vw")) === "_vw") {
+			log_message('info', "Found a phenotype view : " . $phenotype_db_object_name);
+
+			// Append a random number to end of the table, to avoid any name collision with any temporary
+			// tablss created in future runs. On the safer side, make sure that the temporary tables are
+			// deleted once their work is finished.
+			$temp_table_name = $phenotype_db_object_name . "_temp_tbl_" . rand(0, 10000);
+			$temp_stage_query = "SELECT * INTO " . $temp_table_name . " FROM " . $phenotype_db_object_name . " LIMIT 1000 ";
+
+			$this->db->query($temp_stage_query);
+			$phenotype_table = $temp_table_name;
+		}
+
+		return $phenotype_table;
+ 	}
  }
