@@ -44,11 +44,13 @@ class Main extends CI_Controller {
 		if($num_results > 1) {
 			$this->csvutils->generate_csv_file($maize_results, $form_vars['report_type']);			
 		}
+		else {
+			// 6) Show the results summary. TODO : This is not working.
+			$results_data = array("count" => ($num_results-1), "query" => $query);
+			$this->load->view('results', $results_data);
+			log_message('info', "Loading results page ..");			
+		}
 
-		// 6) Show the results summary. TODO : This is not working.
-		//$results_data = array("count" => ($num_results-1), "query" => $query);
-		//$this->load->view('results', $results_data);
-		//log_message('info', "Loading results page ..");
 	}
 
 	// Extracts the form parameters from
