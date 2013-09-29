@@ -37,20 +37,18 @@ class Main extends CI_Controller {
 		$num_results = count($maize_results);
 		log_message('info', "Found " . $num_results . " maize db results for query " . $query);
 
-		// 4) Show the results summary. TODO : This is not working.
-		//$results_data = array("count" => $num_results, "query" => $query);
-		//$this->load->view('results', $results_data);
-		//log_message('info', "Loading results page ..");
-
-
-		// 5) Drop any temporary tables created for intermediate processing
+		// 4) Drop any temporary tables created for intermediate processing
 		$this->maizedao->drop_temporary_tables();
 
-		// 6) Convert data to CSV format for download, only if number of db rows generated is non-zero
-		if($num_results > 0) {
+		// 5) Convert data to CSV format for download, only if number of db rows generated is non-zero
+		if($num_results > 1) {
 			$this->csvutils->generate_csv_file($maize_results, $form_vars['report_type']);			
 		}
 
+		// 6) Show the results summary. TODO : This is not working.
+		//$results_data = array("count" => ($num_results-1), "query" => $query);
+		//$this->load->view('results', $results_data);
+		//log_message('info', "Loading results page ..");
 	}
 
 	// Extracts the form parameters from
@@ -70,7 +68,7 @@ class Main extends CI_Controller {
 		if($this->input->post('predictions_phenotype_cbox') == "on") {
 			$form_vars['predictions'] = PREDICTIONS_TABLE;
 		}
-		if($this->input->post('root_tip_measurements_phenotype_cbox') == "on") {
+		if($this->input->post('root_tip_phenotype_cbox') == "on") {
 			$form_vars['root_tip_measurements'] = ROOT_TIP_MEASUREMENTS_TABLE;
 		}		
 		if($this->input->post('raw_weight_spectra_phenotype_cbox') == "on") {

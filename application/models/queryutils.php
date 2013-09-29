@@ -239,7 +239,7 @@ class Queryutils extends CI_Model {
 			}    		
 			$subquery_body .= $form_vars['predictions'] . " k2 ";
 			if(isset($last_phenotype_alias)) {
-				$subquery_body .= " ON " . $last_phenotype_alias . ".kernel_id = k2.kernel_id ";
+				$subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k2.kernel_id) ";
 			}
 			$last_phenotype_alias = "k2";		
 			$included_tables_map[PREDICTIONS_TABLE] = "k2";
@@ -250,10 +250,10 @@ class Queryutils extends CI_Model {
 			}    		
 			$subquery_body .= $form_vars['root_tip_measurements'] . " k3 ";
 			if(isset($last_phenotype_alias)) {
-				$subquery_body .= " ON " . $last_phenotype_alias . ".kernel_id = k3.kernel_id ";
+				$subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k3.kernel_id) ";
 			}
 			$last_phenotype_alias = "k3";		
-			$included_tables_map[ROOT_TIP_MEASUREMENTS] = "k3";
+			$included_tables_map[ROOT_TIP_MEASUREMENTS_TABLE] = "k3";
     	}    	
     	if(array_key_exists('raw_weight_spectra', $form_vars)) {
 			if(isset($last_phenotype_alias)) {
@@ -261,7 +261,7 @@ class Queryutils extends CI_Model {
 			}    		
 			$subquery_body .= $this->get_phenotype_table($form_vars['raw_weight_spectra']) . " k4 "; 
 			if(isset($last_phenotype_alias)) {
-				$subquery_body .= " ON " . $last_phenotype_alias . ".kernel_id = k4.kernel_id ";
+				$subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k4.kernel_id) ";
 			}
 			$last_phenotype_alias = "k4";		
 			$included_tables_map[RAW_WEIGHT_SPECTRA_TABLE] = "k4";			
@@ -272,10 +272,10 @@ class Queryutils extends CI_Model {
 			}    		
 			$subquery_body .= $this->get_phenotype_table($form_vars['avg_weight_spectra']) . " k5 "; 
 			if(isset($last_phenotype_alias)) {
-				$subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k5.kernel_id ";
+				$subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k5.kernel_id) ";
 			}
 			$last_phenotype_alias = "k5";
-			$included_tables_map[WEIGHT_SPECTRA_AVG_TABLE] = "k5";					
+			$included_tables_map[AVG_WEIGHT_SPECTRA_TABLE] = "k5";					
     	}
     	if(array_key_exists('std_weight_spectra', $form_vars)) {
 			if(isset($last_phenotype_alias)) {
@@ -283,10 +283,10 @@ class Queryutils extends CI_Model {
 			}    		
 			$subquery_body .= $this->get_phenotype_table($form_vars['std_weight_spectra']) . " k6 "; 
 			if(isset($last_phenotype_alias)) {
-				$subquery_body .= " ON " . $last_phenotype_alias . ".kernel_id = k6.kernel_id ";
+				$subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k6.kernel_id) ";
 			}
 			$last_phenotype_alias = "k6";
-            $included_tables_map[WEIGHT_SPECTRA_STD_TABLE] = "k6";					
+            $included_tables_map[STD_WEIGHT_SPECTRA_TABLE] = "k6";					
     	}
 
 		$subquery_select_clause = " SELECT ";
