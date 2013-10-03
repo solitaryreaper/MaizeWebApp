@@ -36,7 +36,7 @@ class Queryutils extends CI_Model {
 
     	$phenotype_query_group_by_clause = $this->get_phenotype_query_group_by_clause($phenotype_meta_subquery, $form_vars);
 
-    	$query .= "SELECT DISTINCT " . $phenotype_query_select_clause . " FROM (" . 
+    	$query .= "SELECT " . $phenotype_query_select_clause . " FROM (" . 
     		       $phenotype_measurements_subquery . 
     		       " ) phenotypes_measurements JOIN (" . 
 				   $phenotype_meta_subquery . 
@@ -299,7 +299,7 @@ class Queryutils extends CI_Model {
         log_message('info', "Aliases : " . $included_tables_aliases[0]);
 		$subquery_select_clause .= $included_tables_aliases[0] . ".kernel_id AS kernel_id1";
 
-        $subquery = $subquery_select_clause . " FROM " . $subquery_body . " LIMIT 1000 ";
+        $subquery = $subquery_select_clause . " FROM " . $subquery_body . " ";
      	log_message('info', "Phenotype subquery generated : " . $subquery);
     	return $subquery;
     }
@@ -344,12 +344,32 @@ class Queryutils extends CI_Model {
 			// tablss created in future runs. On the safer side, make sure that the temporary tables are
 			// deleted once their work is finished.
 			$temp_table_name = $phenotype_db_object_name . "_temp_tbl_" . rand(0, 10000);
-			$temp_stage_query = "SELECT * INTO " . $temp_table_name . " FROM " . $phenotype_db_object_name . " LIMIT 1000 ";
+			$temp_stage_query = "SELECT * INTO " . $temp_table_name . " FROM " . $phenotype_db_object_name . " ";
 
 			$this->db->query($temp_stage_query);
 			$phenotype_table = $temp_table_name;
 		}
 
 		return $phenotype_table;
+ 	}
+
+ 	// Uses SQLFormatter to format the SQL for displaying on HTML page.
+ 	public function get_formatted_sql_query($query)
+ 	{
+ 		$sqlformat_url = 'http://sqlformat.org/api/v1/format';
+ 		$data = array('sql' => $query , 'reindent' => 1);
+
+		$options = array(
+		    'http' => array(
+		        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
+		        'method'  => 'POST',
+		        'content' => http_build_query($data),
+		    ),
+		);
+		$context  = stream_context_create($options);
+		$result = file_get_contents($sqlformat_url, false, $context);
+
+		log_message('info', "Formatted SQL query : " . $query);
+		return $result;		
  	}
  }

@@ -16,17 +16,25 @@
 
 	<div class="container">
 		<table class="table table-bordered table-condensed">
-			<thead>
-				<th>Parameter</th>
-				<th>Value</th>
+			<thead class="span12">
+				<th class="span2">Parameter</th>
+				<th class="span10">Value</th>
 			</thead>
 			<tbody>
 				<tr>
-					<td>ROWS</td>
+					<td>RECORDS</td>
 					<td><?php echo $count;?></td>
 				</tr>
 				<tr>
-					<td>QUERY</td>
+					<td>DOWNLOAD LINK</td>
+					<td>
+						<a href='<?php echo $csv_file_path;?>'>
+							<?php echo "Download " . $report_type . " report.";?>
+						</a>
+					</td>
+				</tr>				
+				<tr>
+					<td>DB QUERY</td>
 					<td><?php echo $query;?></td>				
 				</tr>
 			</tbody>

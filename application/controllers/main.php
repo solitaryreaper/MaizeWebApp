@@ -15,6 +15,8 @@ class Main extends CI_Controller {
         $this->load->model('maizedao');
         $this->load->model('queryutils');
         $this->load->model('csvutils');
+
+        $this->load->library('sqlformatter');
     }
 
 	public function index()
@@ -41,16 +43,17 @@ class Main extends CI_Controller {
 		$this->maizedao->drop_temporary_tables();
 
 		// 5) Convert data to CSV format for download, only if number of db rows generated is non-zero
+		$csv_file_download_link = "";
 		if($num_results > 1) {
-			$this->csvutils->generate_csv_file($maize_results, $form_vars['report_type']);			
+			$csv_file_download_link .= $this->csvutils->generate_csv_file($maize_results, $form_vars['report_type']);			
 		}
-		else {
-			// 6) Show the results summary. TODO : This is not working.
-			$results_data = array("count" => ($num_results-1), "query" => $query);
-			$this->load->view('results', $results_data);
-			log_message('info', "Loading results page ..");			
-		}
+		log_message('info', "CSV file : " . $csv_file_download_link);
 
+		// 6) Show the results summary. TODO : This is not working.
+		log_message('info', "Loading results page ..");		
+		$results_data = array("count" => ($num_results-1), "csv_file_path" => $csv_file_download_link, 
+			"query" => $this->sqlformatter->format($query), "report_type" => $form_vars['report_type']);
+		$this->load->view('results', $results_data);
 	}
 
 	// Extracts the form parameters from

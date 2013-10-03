@@ -40,6 +40,7 @@ define('URL','http://barracuda.botany.wisc.edu/MaizeWebApp/');
 define('IMG',URL.'assets/img/');
 define('CSS',URL.'assets/css/');
 define('JS',URL.'assets/js/');
+define('TEMP_CSV_FILES_DIRECTORY', URL.'data/temp_csv_files/');
 
 // Application specific constants
 // Phenotype measurement data tables

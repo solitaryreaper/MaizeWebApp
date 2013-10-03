@@ -1,5 +1,9 @@
 <?php
 
+// Memory leak issue in PHP fix :
+// http://stackoverflow.com/questions/561066/php-fatal-error-allowed-memory-size-of-134217728-bytes-exhausted-codeigniter
+ini_set('memory_limit', '-1');
+
 /*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
