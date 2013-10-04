@@ -29,18 +29,18 @@ class Queryutils extends CI_Model {
     public function get_query_from_form_vars($form_vars)
     {
     	$query = "";
-    	$phenotype_measurements_subquery = $this->get_phenotype_subquery($form_vars);
+    	$phenotype_facts_subquery = $this->get_phenotype_subquery($form_vars);
     	$phenotype_meta_subquery = $this->get_phenotype_meta_subquery($form_vars);
     	$phenotype_query_select_clause = 
-    		$this->get_phenotype_query_select_clause($phenotype_meta_subquery, $phenotype_measurements_subquery, $form_vars);
+    		$this->get_phenotype_query_select_clause($phenotype_meta_subquery, $phenotype_facts_subquery, $form_vars);
 
     	$phenotype_query_group_by_clause = $this->get_phenotype_query_group_by_clause($phenotype_meta_subquery, $form_vars);
 
     	$query .= "SELECT " . $phenotype_query_select_clause . " FROM (" . 
-    		       $phenotype_measurements_subquery . 
-    		       " ) phenotypes_measurements JOIN (" . 
+    		       $phenotype_facts_subquery . 
+    		       " ) phenotype_facts JOIN (" . 
 				   $phenotype_meta_subquery . 
-				   ") phenotypes_metadata ON phenotypes_measurements.kernel_id1 = phenotypes_metadata.kernel_id " .
+				   ") phenotypes_metadata ON phenotype_facts.kernel_id1 = phenotypes_metadata.kernel_id " .
 				   $phenotype_query_group_by_clause;
 
 		log_message('info', "Final query : " . $query);
@@ -82,7 +82,7 @@ class Queryutils extends CI_Model {
     private function get_phenotype_query_select_clause($phenotype_metadata_query, $phenotype_measurement_query, $form_vars)
     {
     	// If no aggregate function report is chosen, show all data at the granularity of kernel id. 
-    	// Else, just group at population level attributes and aggregate all the measurements.
+    	// Else, just group at population level attributes and aggregate all the facts.
 
     	$phenotype_query_select_clause = "";
     	if(!$this->is_aggregate_function_report($form_vars)) {
@@ -90,7 +90,7 @@ class Queryutils extends CI_Model {
     		$phenotype_metadata_select_string = 
     			$this->get_query_display_columns($phenotype_metadata_query, 'phenotypes_metadata.', '', $excluded_columns, 'SELECT');
     		$phenotype_measurement_select_string = 
-    			$this->get_query_display_columns($phenotype_measurement_query, 'phenotypes_measurements.', '', $excluded_columns, 'SELECT');
+    			$this->get_query_display_columns($phenotype_measurement_query, 'phenotype_facts.', '', $excluded_columns, 'SELECT');
 
     		$phenotype_query_select_clause = $phenotype_metadata_select_string . " , " . $phenotype_measurement_select_string;
     	}
@@ -101,7 +101,7 @@ class Queryutils extends CI_Model {
     		$phenotype_metadata_select_string = 
     			$this->get_query_display_columns($phenotype_metadata_query, 'phenotypes_metadata.', '', $excluded_columns, 'SELECT');
     		$phenotype_measurement_select_string = 
-				$this->get_query_display_columns($phenotype_measurement_query, $aggregate_function . '(phenotypes_measurements.', ')', 
+				$this->get_query_display_columns($phenotype_measurement_query, $aggregate_function . '(phenotype_facts.', ')', 
 					$excluded_columns, 'SELECT');
     		$phenotype_query_select_clause = $phenotype_metadata_select_string . " , " . $phenotype_measurement_select_string;
     	}
@@ -168,9 +168,9 @@ class Queryutils extends CI_Model {
     	// 2) Set of tables to be joined for getting the metadata
     	$subquery_body =  
 			" FROM kernels kernels " .
-			" LEFT OUTER JOIN kernel_plates plates " .
+			" JOIN kernel_plates plates " .
 			" ON (kernels.plate_id = plates.id) " .
-			" LEFT OUTER JOIN population_lines population " .
+			" JOIN population_lines population " .
 			" ON (plates.population_line_id = population.id) ";
 
 		// 3) Dynamically generate the WHERE clause for the query based on the filters chosen
