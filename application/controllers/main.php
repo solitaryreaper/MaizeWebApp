@@ -35,9 +35,10 @@ class Main extends CI_Controller {
 		$query = $this->queryutils->get_query_from_form_vars($form_vars);
 
 		// 3) Fetch the results from maize database
+		$start_time = microtime(true);
 		$maize_results = $this->maizedao->get_query_results($query);
 		$num_results = count($maize_results);
-		log_message('info', "Found " . $num_results . " maize db results for query " . $query);
+		log_message('info', "Found " . $num_results . " in " . (microtime(true) - $start_time) . " seconds for maize db results for query " . $query);
 
 		// 4) Drop any temporary tables created for intermediate processing
 		$this->maizedao->drop_temporary_tables();
@@ -50,9 +51,10 @@ class Main extends CI_Controller {
 		log_message('info', "CSV file : " . $csv_file_download_link);
 
 		// 6) Show the results summary. TODO : This is not working.
-		log_message('info', "Loading results page ..");		
 		$results_data = array("count" => ($num_results-1), "csv_file_path" => $csv_file_download_link, 
 			"query" => $this->sqlformatter->format($query), "report_type" => $form_vars['report_type']);
+
+		log_message('info', "Loading results page ..");
 		$this->load->view('results', $results_data);
 	}
 
@@ -70,6 +72,9 @@ class Main extends CI_Controller {
 		if($this->input->post('kernel_3d_phenotype_cbox') == "on") {
 			$form_vars['kernel_3d'] = KERNEL_3D_TABLE;
 		}
+		if($this->input->post('kernel_dims_phenotype_cbox') == "on") {
+			$form_vars['kernel_dims'] = KERNEL_DIMENSIONS_TABLE;
+		}		
 		if($this->input->post('predictions_phenotype_cbox') == "on") {
 			$form_vars['predictions'] = PREDICTIONS_TABLE;
 		}

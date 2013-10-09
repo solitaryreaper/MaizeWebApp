@@ -45,11 +45,12 @@ define('TEMP_CSV_FILES_DIRECTORY', URL.'data/temp_csv_files/');
 // Application specific constants
 // Phenotype measurement data tables
 define('KERNEL_3D_TABLE', 'kernel_3d');
+define('KERNEL_DIMENSIONS_TABLE', 'kernel_dims_tbl');
 define('PREDICTIONS_TABLE', 'predictions');
 define('ROOT_TIP_MEASUREMENTS_TABLE', 'root_tip_measurements');
-define('RAW_WEIGHT_SPECTRA_TABLE', 'raw_weights_spectra_vw');
-define('AVG_WEIGHT_SPECTRA_TABLE', 'averageweightspectra_vw');
-define('STD_WEIGHT_SPECTRA_TABLE', 'standarddeviationweightspectra_vw');
+define('RAW_WEIGHT_SPECTRA_TABLE', 'raw_weights_spectra_tbl');
+define('AVG_WEIGHT_SPECTRA_TABLE', 'avg_weights_spectra_tbl');
+define('STD_WEIGHT_SPECTRA_TABLE', 'std_weights_spectra_tbl');
 
 // Phenotype metadata tables
 define('KERNEL_TABLE', 'kernels');

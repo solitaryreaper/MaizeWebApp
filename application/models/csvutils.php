@@ -13,6 +13,7 @@ class Csvutils extends CI_Model {
     {
         // remove all whitespaces from string
         $report_type_suffix = str_replace(' ', '_', $report_type);
+        $report_type_suffix = str_replace('/', '_', $report_type);
         // add a constant at the end
         $report_type_suffix .= "_" . rand(0, 10000);
 
@@ -20,7 +21,14 @@ class Csvutils extends CI_Model {
         $file_dir = getcwd() . "/data/temp_csv_files/";
 
         log_message('info', "Writing file to path .. " . $file_dir . $file_name);
-        $output = fopen($file_dir . $file_name, "w");
+        $output = NULL;
+        try {
+            $output = fopen($file_dir . $file_name, "w");
+        }
+        catch(Exception $e) {
+            log_message('error', "Caught exception " . $e->getMessage(). "\n");
+        }
+
         foreach ($db_results as $result) {
             $row = array();
             foreach($result as $result_col) {

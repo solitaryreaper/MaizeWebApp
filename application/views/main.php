@@ -14,9 +14,9 @@
 		<h1 align="center"><strong>MAIZE DATA GENERATOR </strong></h1>
 	</header>
 
-	<div class="container">
+	<div>
 	<form class="form-horizontal" id="maize_data_form" name="maize_data_form" action="http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/load_maize_data" 
-		  onsubmit="return validate_form()" method="post">
+			method="post" onsubmit="return validate_form()">
 
 	<!--
 	<div id="results_loading" style='display: none;'>
@@ -54,6 +54,9 @@
 			<td>
 				<input type="checkbox" id="kernel_3d_phenotype_cbox" name="kernel_3d_phenotype_cbox"> Kernel 3D
 			</td>
+			<td>
+				<input type="checkbox" id="kernel_dims_phenotype_cbox" name="kernel_dims_phenotype_cbox"> Kernel Dimensions
+			</td>			
 			<td>
 				<input type="checkbox" id="predictions_phenotype_cbox" name="predictions_phenotype_cbox"> Predictions
 			</td>
@@ -251,13 +254,19 @@
 		}
 
 	    $('#results_loading').show();
-	    alert("posting data ..");
-	    $.post('http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/load_maize_data', function() {
-	    	alert("Inside hide function ..");
-	        $('#results_loading').hide();
-	    });
+	    $.post(
+	    	'http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/load_maize_data', 
+	    	$(this).serialize(),
+	    	function(data) {
+	    		alert("Server says " + data);
+	        	$('#results_loading').hide();
+	        	$.post(
+	        		'http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/show_results_summary',
+	        		data
+	        	);
+	    	}
+	    );
 
-	    alert("Outside hide function ..");
 	    return false;
 	});
 	*/
