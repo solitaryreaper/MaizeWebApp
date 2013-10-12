@@ -36,9 +36,10 @@ class Main extends CI_Controller {
 
 		// 3) Fetch the results from maize database
 		$start_time = microtime(true);
+		log_message('info', "Launching final query ..");
 		$maize_results = $this->maizedao->get_query_results($query);
 		$num_results = count($maize_results);
-		log_message('info', "Found " . $num_results . " in " . (microtime(true) - $start_time) . " seconds for maize db results for query " . $query);
+		log_message('info', "Found " . $num_results . " results in " . (microtime(true) - $start_time) . " seconds for maize db results");
 
 		// 4) Drop any temporary tables created for intermediate processing
 		$this->maizedao->drop_temporary_tables();
@@ -46,7 +47,10 @@ class Main extends CI_Controller {
 		// 5) Convert data to CSV format for download, only if number of db rows generated is non-zero
 		$csv_file_download_link = "";
 		if($num_results > 1) {
+			$start_time = microtime(true);
 			$csv_file_download_link .= $this->csvutils->generate_csv_file($maize_results, $form_vars['report_type']);			
+			$end_time = microtime(true);
+			log_message('info', "Generated CSV file containing " . $num_results . " results in " . ($end_time - $start_time) . " seconds.");
 		}
 		log_message('info', "CSV file : " . $csv_file_download_link);
 

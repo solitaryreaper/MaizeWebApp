@@ -46,7 +46,7 @@ class Queryutils extends CI_Model {
 
 		log_message('info', "Final query : " . $query);
         $end_time = microtime(true);
-        log_message("info", "Final query took : " . ($end_time - $start_time) . " seconds." );
+        log_message("info", "Dynamic final query generation took : " . ($end_time - $start_time) . " seconds." );
 
     	return $query;
     }
