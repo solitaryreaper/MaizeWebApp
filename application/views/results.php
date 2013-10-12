@@ -23,15 +23,29 @@
 			<tbody>
 				<tr>
 					<td>RECORDS</td>
-					<td><?php echo $count;?></td>
+					<td>
+						<?php
+						if ($count > 0) {
+							echo $count;
+						}
+						else {
+							echo '<span class="label label-danger">No records found !!</span>';
+						}
+						?>
+					</td>					
 				</tr>
 				<tr>
-					<td>DOWNLOAD LINK</td>
-					<td>
-						<a href='<?php echo $csv_file_path;?>'>
-							<?php echo "Download " . $report_type . " report.";?>
-						</a>
-					</td>
+					<!-- Show a download link only if count > 0-->
+					<?php
+					if ($count > 0) {
+						echo "<td>DOWNLOAD LINK</td>";
+						echo "<td>";
+						echo '<a href="' . $csv_file_path . '">';
+						echo "Download " . $report_type . " report.";
+						echo "</a>";
+						echo "</td>";
+					}
+					?>
 				</tr>				
 				<tr>
 					<td>DB QUERY</td>
