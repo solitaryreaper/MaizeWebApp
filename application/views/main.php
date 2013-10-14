@@ -14,15 +14,13 @@
 		<h1 align="center"><strong>MAIZE DATA GENERATOR </strong></h1>
 	</header>
 
-	<div>
+	<div id="results_loading" style='display: none;'>
+		<img src="http://www.gifstache.com/images/ajax_loader.gif" class="ajax-loader">
+	</div>
+
+	<div id="form_container" name="form_container">
 	<form class="form-horizontal" id="maize_data_form" name="maize_data_form" action="http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/load_maize_data" 
 			method="post" onsubmit="return validate_form()">
-
-	<!--
-	<div id="results_loading" style='display: none;'>
-		<img src="http://www.mytreedb.com/uploads/mytreedb/loader/ajax_loader_green_512.gif">
-	</div>
-	-->
 
 	<!-- Report type chosen -->
 	<table class="table table-bordered table-condensed">
@@ -245,32 +243,6 @@
 
 	<script>
 
-	// Submit the form and show a loading gif till the results are fetched
-	/*
-	$('#maize_data_form').submit(function() {
-		var is_validated = validate_form();
-		if(is_validated == false) {
-			return false;
-		}
-
-	    $('#results_loading').show();
-	    $.post(
-	    	'http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/load_maize_data', 
-	    	$(this).serialize(),
-	    	function(data) {
-	    		alert("Server says " + data);
-	        	$('#results_loading').hide();
-	        	$.post(
-	        		'http://barracuda.botany.wisc.edu/MaizeWebApp/index.php/main/show_results_summary',
-	        		data
-	        	);
-	    	}
-	    );
-
-	    return false;
-	});
-	*/
-
 	// Dynamically change form based on the select report type value chosen in dropdown
 	$( "#report_type" ).change(function() {
 		var report_type = $(this).val();
@@ -346,6 +318,12 @@
 			alert("Please select atleast one phenotype_metadata to proceed !!");
 			return false;
 		}
+
+		// make the background translucent and show a loading gif to make
+		// the web application interactive and let the user know that some
+		// processing is going on in the background.
+		$("#form_container").css({ opacity: 0.25 });
+		$('#results_loading').show();
 
 		return true;
 	}

@@ -39,9 +39,9 @@ class Queryutils extends CI_Model {
 
     	$query .= "SELECT " . $phenotype_query_select_clause . " FROM (" . 
     		       $phenotype_facts_subquery . 
-    		       " ) phenotype_facts JOIN (" . 
+    		       " ) pfacts JOIN (" . 
 				   $phenotype_meta_subquery . 
-				   ") phenotypes_metadata ON phenotype_facts.kernel_id1 = phenotypes_metadata.kernel_id " .
+				   ") pmeta ON pfacts.kernel_id1 = pmeta.kernel_id " .
 				   $phenotype_query_group_by_clause;
 
 		log_message('info', "Final query : " . $query);
@@ -117,9 +117,9 @@ class Queryutils extends CI_Model {
     	if(!$this->is_aggregate_function_report($form_vars)) {
     		$excluded_columns = array("kernel_id1");
     		$phenotype_metadata_select_string = 
-    			$this->get_query_display_columns($phenotype_metadata_query, 'phenotypes_metadata.', '', $excluded_columns, 'SELECT');
+    			$this->get_query_display_columns($phenotype_metadata_query, 'pmeta.', '', $excluded_columns, 'SELECT');
     		$phenotype_measurement_select_string = 
-    			$this->get_query_display_columns($phenotype_measurement_query, 'phenotype_facts.', '', $excluded_columns, 'SELECT');
+    			$this->get_query_display_columns($phenotype_measurement_query, 'pfacts.', '', $excluded_columns, 'SELECT');
 
     		$phenotype_query_select_clause = $phenotype_metadata_select_string . " , " . $phenotype_measurement_select_string;
     	}
@@ -128,9 +128,9 @@ class Queryutils extends CI_Model {
    			$aggregate_function = $this->get_aggregate_function($form_vars);
 
     		$phenotype_metadata_select_string = 
-    			$this->get_query_display_columns($phenotype_metadata_query, 'phenotypes_metadata.', '', $excluded_columns, 'SELECT');
+    			$this->get_query_display_columns($phenotype_metadata_query, 'pmeta.', '', $excluded_columns, 'SELECT');
     		$phenotype_measurement_select_string = 
-				$this->get_query_display_columns($phenotype_measurement_query, $aggregate_function . '(phenotype_facts.', ')', 
+				$this->get_query_display_columns($phenotype_measurement_query, $aggregate_function . '(pfacts.', ')', 
 					$excluded_columns, 'SELECT');
     		$phenotype_query_select_clause = $phenotype_metadata_select_string . " , " . $phenotype_measurement_select_string;
     	}
@@ -150,7 +150,7 @@ class Queryutils extends CI_Model {
     		$phenotype_query_group_by_clause .= " GROUP BY ";
     		$excluded_columns = array("kernel_id", "kernel_id1");
     		$phenotype_query_group_by_clause .= 
-    			$this->get_query_display_columns($phenotype_metadata_query, 'phenotypes_metadata.', '', $excluded_columns, 'GROUP');
+    			$this->get_query_display_columns($phenotype_metadata_query, 'pmeta.', '', $excluded_columns, 'GROUP');
     	}
 
     	log_message('info', "Group By clause : " . $phenotype_query_group_by_clause);
@@ -400,25 +400,5 @@ class Queryutils extends CI_Model {
         */
 
 		return $phenotype_table;
- 	}
-
- 	// Uses SQLFormatter to format the SQL for displaying on HTML page.
- 	public function get_formatted_sql_query($query)
- 	{
- 		$sqlformat_url = 'http://sqlformat.org/api/v1/format';
- 		$data = array('sql' => $query , 'reindent' => 1);
-
-		$options = array(
-		    'http' => array(
-		        'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
-		        'method'  => 'POST',
-		        'content' => http_build_query($data),
-		    ),
-		);
-		$context  = stream_context_create($options);
-		$result = file_get_contents($sqlformat_url, false, $context);
-
-		log_message('info', "Formatted SQL query : " . $query);
-		return $result;		
  	}
  }

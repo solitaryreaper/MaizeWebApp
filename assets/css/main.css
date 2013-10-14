@@ -5,3 +5,19 @@ body {
 .table thead th {
     background-color: #8DBDD8;
 }
+
+#results_loading {
+    height: 200px;
+    position: absolute;
+    left: 425px;
+ }
+
+.ajax-loader {
+    position: relative;
+    left: 50%;
+    top: 50%;
+    margin-left: -32px; /* -1 * image width / 2 */
+    margin-top: -32px;  /* -1 * image height / 2 */
+    display: block;     
+}
+

@@ -54,9 +54,8 @@ class Main extends CI_Controller {
 		}
 		log_message('info', "CSV file : " . $csv_file_download_link);
 
-		// 6) Show the results summary. TODO : This is not working.
 		$results_data = array("count" => ($num_results-1), "csv_file_path" => $csv_file_download_link, 
-			"query" => $this->sqlformatter->format($query), "report_type" => $form_vars['report_type']);
+		"query" => $this->sqlformatter->format($query), "report_type" => $form_vars['report_type']);
 
 		log_message('info', "Loading results page ..");
 		$this->load->view('results', $results_data);
