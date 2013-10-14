@@ -15,7 +15,7 @@
 	</header>
 
 	<div id="results_loading" style='display: none;'>
-		<img src="http://www.gifstache.com/images/ajax_loader.gif" class="ajax-loader">
+		<img src="http://jimpunk.net/Loading/wp-content/uploads/loading1.gif">
 	</div>
 
 	<div id="form_container" name="form_container">

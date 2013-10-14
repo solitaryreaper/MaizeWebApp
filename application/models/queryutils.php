@@ -354,8 +354,8 @@ class Queryutils extends CI_Model {
     // Get all the measurement data columns for this phenotype
     private function get_fact_columns_for_phenotype($phenotype_table, $phenotype_query_prefix)
     {
-		$phenotype_select_query = 
-			" SELECT ('" . $phenotype_query_prefix . ".'". " ||  column_name ) as col_name " . 
+        $phenotype_select_query = 
+			" SELECT column_name  AS col_name " .
 			" FROM information_schema.columns " .
 			" WHERE table_catalog='maize' AND table_name = '" . $phenotype_table  ."' AND ".
 	      		" data_type IN ('integer', 'double precision') AND ". 
@@ -366,8 +366,9 @@ class Queryutils extends CI_Model {
 	    // get a comma separated list of field values
 		$fields_as_select_clause = "";
 		$query_output = $this->db->query($phenotype_select_query);
+        $table_abbrev_prefix = $this->get_table_abbreviation($phenotype_table);
 		foreach($query_output->result() as $row) {
-	        $fields_as_select_clause .= $row->col_name . " , "; 
+	        $fields_as_select_clause .= $phenotype_query_prefix . "." . $row->col_name . " AS " . $table_abbrev_prefix . "_" . $row->col_name . " , "; 
 	    }	
 
 	    $fields_as_select_clause = trim($fields_as_select_clause);
@@ -384,21 +385,29 @@ class Queryutils extends CI_Model {
  	private function get_phenotype_table($phenotype_db_object_name)
  	{
 		$phenotype_table = $phenotype_db_object_name;
-        /*
-		if(substr($phenotype_db_object_name, -strlen("_vw")) === "_vw") {
-			log_message('info', "Found a phenotype view : " . $phenotype_db_object_name);
-
-			// Append a random number to end of the table, to avoid any name collision with any temporary
-			// tablss created in future runs. On the safer side, make sure that the temporary tables are
-			// deleted once their work is finished.
-			$temp_table_name = $phenotype_db_object_name . "_temp_tbl_" . rand(0, 10000);
-			$temp_stage_query = "SELECT * INTO " . $temp_table_name . " FROM " . $phenotype_db_object_name . " ";
-
-			$this->db->query($temp_stage_query);
-			$phenotype_table = $temp_table_name;
-		}
-        */
-
 		return $phenotype_table;
  	}
+
+    // Returns the abbreviation of a table name. This is prefixed with the column name to 
+    // distinguish similar columns across multiple phenotype tables. For examples, wl_* columns
+    // are present in both standard deviation and average weight spectra views. To avoid name
+    // collisions, this is required.
+    private function get_table_abbreviation($table_name)
+    {
+        $tokens = explode('_', $table_name);
+        $table_abbrev = "";
+
+        # If a simple table name, just return first three characters
+        if(count($tokens) == 1) {
+            $table_abbrev = substr($tokens[0],0,3);
+        }
+        # Else take the first letter of each token and form a table abbreviation using that
+        else {
+           foreach($tokens as $token) {
+             $table_abbrev .= substr($token, 0, 1);
+           }
+        }
+
+        return $table_abbrev;
+    }
  }
