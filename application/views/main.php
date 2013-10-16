@@ -15,7 +15,7 @@
 	</header>
 
 	<div id="results_loading" style='display: none;'>
-		<img src="http://jimpunk.net/Loading/wp-content/uploads/loading1.gif">
+		<img src="https://usa.d-mpro.com/Assets/images/loadinglogin.gif">
 	</div>
 
 	<div id="form_container" name="form_container">

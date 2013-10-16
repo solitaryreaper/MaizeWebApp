@@ -33,29 +33,25 @@ class Main extends CI_Controller {
 
 		// 2) Get the dynamic query based on the form parameters
 		$query = $this->queryutils->get_query_from_form_vars($form_vars);
+		$report_type = $form_vars['report_type'];
 
-		// 3) Fetch the results from maize database
-		$start_time = microtime(true);
-		log_message('info', "Launching final query ..");
-		$maize_results = $this->maizedao->get_query_results($query);
-		$num_results = count($maize_results);
-		log_message('info', "Found " . $num_results . " results in " . (microtime(true) - $start_time) . " seconds for maize db results");
+		// 3) Loads the query results into a temporary CSV file
+		$csv_file_download_link = "";
+		$csv_file_download_link = $this->maizedao->load_query_results_into_csv_file($query, $report_type);
+
+		$num_results = $this->maizedao->get_results_count($csv_file_download_link);
 
 		// 4) Drop any temporary tables created for intermediate processing
 		$this->maizedao->drop_temporary_tables();
 
 		// 5) Convert data to CSV format for download, only if number of db rows generated is non-zero
-		$csv_file_download_link = "";
-		if($num_results > 1) {
-			$start_time = microtime(true);
-			$csv_file_download_link .= $this->csvutils->generate_csv_file($maize_results, $form_vars['report_type']);			
-			$end_time = microtime(true);
-			log_message('info', "Generated CSV file containing " . $num_results . " results in " . ($end_time - $start_time) . " seconds.");
+		if($num_results > 0) {
+			log_message('info', "CSV file : " . $csv_file_download_link);
 		}
-		log_message('info', "CSV file : " . $csv_file_download_link);
 
+		// 6) Render the results page
 		$results_data = array("count" => ($num_results-1), "csv_file_path" => $csv_file_download_link, 
-		"query" => $this->sqlformatter->format($query), "report_type" => $form_vars['report_type']);
+		"query" => $this->sqlformatter->format($query), "report_type" => $report_type);
 
 		log_message('info', "Loading results page ..");
 		$this->load->view('results', $results_data);

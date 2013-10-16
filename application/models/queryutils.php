@@ -410,4 +410,5 @@ class Queryutils extends CI_Model {
 
         return $table_abbrev;
     }
+
  }
