@@ -15,7 +15,7 @@
 	</header>
 
 	<div id="results_loading" style='display: none;'>
-		<img src="https://usa.d-mpro.com/Assets/images/loadinglogin.gif">
+		<img src="<?php echo(IMG.'loading.gif'); ?>">
 	</div>
 
 	<div id="form_container" name="form_container">

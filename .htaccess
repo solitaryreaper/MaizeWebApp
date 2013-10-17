@@ -1,4 +1,0 @@
-AuthName "Secure Area"
-AuthType Basic
-AuthUserFile /etc/httpd/passwd/.htpasswd
-require valid-user
