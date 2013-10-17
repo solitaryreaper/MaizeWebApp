@@ -170,6 +170,26 @@
 	</tbody>
 	</table>
 
+	<!-- Contains all the phenotypes which can be chosen -->
+	<table class="table table-bordered table-hover table-condensed">
+	<thead>
+		<th colspan="3">Step 3.1 <i class="icon-arrow-right"></i> Choose genomic information</th>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				<input type="checkbox" id="name_marker_cbox" name="name_marker_cbox"> Marker Type Name
+			</td>
+			<td>
+				<input type="checkbox" id="chromosome_marker_cbox" name="chromosome_marker_cbox"> Marker Type Chromosome
+			</td>			
+			<td>
+				<input type="checkbox" id="map_location_marker_cbox" name="map_location_marker_cbox"> Marker Type Map Location
+			</td>
+		</tr>
+	</tbody>
+	</table>
+
 	<!--  Contains the various filters and constraints to be applied the key data elements -->
 	<table class="table table-bordered table-hover table-condensed">
 	<thead>
@@ -248,6 +268,7 @@
 		var report_type = $(this).val();
 		change_phenotype_display(report_type);
 		change_phenotype_metadata_display(report_type);
+		change_phenotype_genomic_metadata_display(report_type);
 	});
 
 	// Modifies the display behaviour of phenotype checkboxes based on report type.
@@ -283,6 +304,20 @@
 			$("#population_type_meta_cbox").parent().show(); 
 			$("#isolate_meta_cbox").parent().show(); 
 		}
+	}
+
+	// Modifies the display behaviour of phenotype genomic metadata checkboxes based on report type.
+	function change_phenotype_genomic_metadata_display(report_type)
+	{
+		var phenotype_genomic_metadata_tags = $("[id$='marker_cbox']");
+		phenotype_genomic_metadata_tags.removeAttr('checked');
+		if(report_type == "Raw Weight/Spectra") {
+			phenotype_genomic_metadata_tags.parent().closest("table").hide();
+		}
+		else {
+			phenotype_genomic_metadata_tags.parent().closest("table").show();
+		}
+
 	}
 
 	// Validates the form

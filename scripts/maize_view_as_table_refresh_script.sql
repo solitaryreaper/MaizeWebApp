@@ -30,4 +30,10 @@ DROP TABLE kernel_dims_tbl;
 SELECT * INTO kernel_dims_tbl FROM kernel_dims;
 CREATE INDEX kernel_id_dims_ix ON kernel_dims_tbl(kernel_id);
 
+-- Update root tip measurement crosstab table
+DROP TABLE root_tip_measurements_crosstab;
+
+SELECT * FROM generate_root_tip_crosstab('root_tip_measurements', 'root_tip_measurements_crosstab'); 
+CREATE INDEX root_tip_ct_ix ON root_tip_measurements_crosstab(kernel_id);
+
 

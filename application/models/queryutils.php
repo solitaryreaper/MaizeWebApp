@@ -17,8 +17,10 @@ class Queryutils extends CI_Model {
 			"cob_position_x" => "kernels.cob_position_x", "cob_position_y" => "kernels.cob_position_y",
 			"weights_repetition" => "raw_weights_spectra_vw.weights_repetition", "weights_idx" => "raw_weights_spectra_vw.weights_idx",
 			"spectra_repetition" => "raw_weights_spectra_vw.spectra_repetition", "raw_weights_spectra_vw.spectra_idx" => "spectra_idx",
-			"spectra_light_tube" => "raw_weights_spectra_vw.spectra_light_tube", "spectra_operator" => "raw_weights_spectra_vw.spectra_operator"				
+			"spectra_light_tube" => "raw_weights_spectra_vw.spectra_light_tube", "spectra_operator" => "raw_weights_spectra_vw.spectra_operator"
 	);
+
+    // "name" => "marker_types.name", "chromosome" => "marker_types.chromosome", "map_location" => "marker_types.map_location"      
 
     function __construct() {
     	// call parent's constructor

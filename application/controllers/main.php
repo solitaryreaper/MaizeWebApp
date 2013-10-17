@@ -53,7 +53,6 @@ class Main extends CI_Controller {
 		$results_data = array("count" => ($num_results-1), "csv_file_path" => $csv_file_download_link, 
 		"query" => $this->sqlformatter->format($query), "report_type" => $report_type);
 
-		log_message('info', "Loading results page ..");
 		$this->load->view('results', $results_data);
 	}
 
@@ -98,6 +97,17 @@ class Main extends CI_Controller {
 				if($this->input->post($form_key) == "on") {
 					// strip off the marker to indicate phenotype metadata
 					$new_key = str_replace("_meta_cbox", "", $form_key);
+					$form_vars[$new_key] = $new_key;
+				}
+			}
+		} 
+
+		// get the phenotype genomic information
+		foreach($this->input->post() as $form_key=>$form_value) {
+			if(strpos($form_key, "_marker_cbox") > 0) {
+				if($this->input->post($form_key) == "on") {
+					// strip off the marker to indicate phenotype metadata
+					$new_key = str_replace("_marker_cbox", "", $form_key);
 					$form_vars[$new_key] = $new_key;
 				}
 			}
