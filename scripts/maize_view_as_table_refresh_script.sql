@@ -7,6 +7,7 @@
 */
 
 -- Update raw_weights_spectra_tbl
+
 DROP TABLE raw_weights_spectra_tbl;
 
 SELECT * INTO raw_weights_spectra_tbl FROM raw_weights_spectra_vw;

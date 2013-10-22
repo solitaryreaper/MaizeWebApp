@@ -311,7 +311,7 @@
 	{
 		var phenotype_genomic_metadata_tags = $("[id$='marker_cbox']");
 		phenotype_genomic_metadata_tags.removeAttr('checked');
-		if(report_type == "Raw Weight/Spectra") {
+		if(report_type == "Raw Weight/Spectra" || report_type == "Raw Phenotypes") {
 			phenotype_genomic_metadata_tags.parent().closest("table").hide();
 		}
 		else {
