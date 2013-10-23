@@ -162,8 +162,9 @@ class Queryutils extends CI_Model {
     // Determines if the chosen report involves data aggregation or not
     private function is_aggregate_function_report($form_vars)
     {
-    	if(in_array('Raw Weight/Spectra', $form_vars) || in_array('Raw Phenotypes', $form_vars)) {
-    		return true; // Temp HACK
+	var_dump($form_vars);
+	if(in_array('Raw Weight/Spectra', $form_vars) || in_array('Raw Phenotypes', $form_vars)) {
+    		return false; 
     	}
     	else {
     		return true;
@@ -418,7 +419,7 @@ class Queryutils extends CI_Model {
     // Query that returns all the genomic information
     public function get_all_genomic_metadata_query()
     {
-        return "SELECT name, chromosone AS chromosome, map_location FROM marker_types WHERE map_location != 0 AND type='IBM_RILs' ORDER BY 1 ";
+        return "SELECT name, chromosone AS chromosome, map_location FROM marker_types WHERE map_location != 0 AND type='IBM_RILs' ORDER BY 1 LIMIT 10";
     }
 
     public function get_population_lines_genomic_meta_query()
@@ -428,7 +429,7 @@ class Queryutils extends CI_Model {
         $query .= " JOIN markers m " ;
         $query .= " ON (m.marker_type_id = mt.id) ";
         $query .= " WHERE mt.map_location != 0 AND type = 'IBM_RILs' ";
-        $query .= " ORDER BY 1,2 ";
+        $query .= " ORDER BY 1,2 LIMIT 10";
 
         return $query;
     }

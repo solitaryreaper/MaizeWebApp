@@ -40,6 +40,7 @@ class Main extends CI_Controller {
 
 		// For genomic information, we need to really complex dynamic SQL processing
 		$is_genomic_info_reqd = array_key_exists(IS_GENOMIC_INFO_REQD, $form_vars) ? True : False;
+		log_message("info", "IS genome info ? " . $is_genomic_info_reqd);
 		$csv_file_download_link = $this->maizedao->load_query_results($query, $report_type, $is_genomic_info_reqd);
 
 		$num_results = $this->maizedao->get_results_count($csv_file_download_link);
@@ -67,7 +68,8 @@ class Main extends CI_Controller {
 		$form_vars = array();
 
 		// get the report type chosen
-		$form_vars['report_type'] = $this->input->post('report_type');
+		$form_vars['report_type'] = trim($this->input->post('report_type'));
+		log_message("info", " ## Report Type : " . $this->input->post('report_type'));
 
 		// get the phenotypes selected and map them to their database tables
 		if($this->input->post('kernel_3d_phenotype_cbox') == "on") {
@@ -107,7 +109,7 @@ class Main extends CI_Controller {
 
 		// get the phenotype genomic information
 		if($this->input->post(IS_GENOMIC_INFO_REQD) == "on") {
-			$form_vars[IS_GENOMIC_INFO_REQD] = TRUE;
+			$form_vars[IS_GENOMIC_INFO_REQD] = IS_GENOMIC_INFO_REQD;
 		}
 
 		// get the population type filter
@@ -129,7 +131,7 @@ class Main extends CI_Controller {
 			$form_vars['filter_packet_value'] = $filter_packet_value;
 		}		
 
-		//log_message('info', "Extracted form variables : " . print_r($form_vars));
+		log_message('info', "Extracted form variables : " . print_r($form_vars));
 
 		return $form_vars;
 	}

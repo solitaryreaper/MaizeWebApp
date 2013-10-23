@@ -85,7 +85,7 @@ class Maizedao extends CI_Model {
         }
 
         $end_time = microtime(true);
-        log_message("info", "Created population crosstab in-memory " . ($end_time - $start_time) . " seconds" );
+        log_message("info", "Created population crosstab in-memory " . ($end_time - $start_time) . " seconds for " . count($population_lines_crosstab) . " records"  );
 
         return $population_lines_crosstab;
     }
@@ -95,6 +95,9 @@ class Maizedao extends CI_Model {
     public function load_query_results_with_genomic_info_into_csv_file($query, $report_type)
     {
         log_message("info", "Decorating phenotype results with genomic info ..");
+
+	// Slight optimization : Run phenotype query first. Only if it returns any rows, then proceed
+	// to fetch genomic metadata.
 
         // Get the genomic data
         $header_rows = $this->get_genomic_header_rows();
@@ -111,9 +114,13 @@ class Maizedao extends CI_Model {
         $joined_results = array();
         foreach($db_results->result() as $pid_row) {
             $pid = $pid_row->population_line_id;
+	    $db_row = array();
+	    foreach($pid_row as $pid_field) {
+	    	$db_row[] = $pid_field;
+	    }
             if(array_key_exists($pid, $population_genomic_crosstab)) {
-                $pid_genomic_info = $population_genomic_crosstab[$pid];
-                array_push($joined_results, array_merge($pid_row, $pid_genomic_info));    
+		$pid_genomic_info = $population_genomic_crosstab[$pid];
+		array_push($joined_results, array_merge($db_row, $pid_genomic_info));    
                 log_message('info', "## PID is present : " . $pid);            
             }
             else {
@@ -123,18 +130,21 @@ class Maizedao extends CI_Model {
         $end_time = microtime(true);
         log_message("info", "Time taken to fetch db results : " . ($end_time - $start_time) . " seconds => " . count($joined_results));
 
-        log_message("info", "Marker results : " . var_dump($header_rows));
         $start_time = microtime(true);
-        $empty_db_header_clone_array = array_fill(0,count($db_header), "");
+        $empty_db_header_clone_array = array_fill(0,count($db_header), "*");
         $final_op_header_row_1 = array_merge($db_header, $header_rows['NAME']);
         $final_op_header_row_2 = array_merge($empty_db_header_clone_array, $header_rows['CHROMOSOME']);
         $final_op_header_row_3 = array_merge($empty_db_header_clone_array, $header_rows['MAP_LOCATION']);
 
-        $final_output = array_merge($final_op_header_row_1, $final_op_header_row_2, $final_op_header_row_3, $joined_results);
+        $final_output = array();
+	array_push($final_output, $final_op_header_row_1);
+	array_push($final_output, $final_op_header_row_2);
+	array_push($final_output, $final_op_header_row_3);
+	$final_output_array = array_merge($final_output, $joined_results);
         $end_time = microtime(true);
         log_message("info", "Time taken to generate merge output array : " . ($end_time - $start_time) . " seconds");
 
-        return $this->csvutils->generate_csv_file($final_output, $report_type);
+        return $this->csvutils->generate_csv_file($final_output_array, $report_type);
     }
 
     // Fires a query against the database and then loads the results into a CSV file.
