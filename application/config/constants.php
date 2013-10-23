@@ -57,5 +57,7 @@ define('KERNEL_TABLE', 'kernels');
 define('PLATE_TABLE', 'kernel_plates');
 define('POPULATION_LINES', 'population_lines');
 
+define('IS_GENOMIC_INFO_REQD', 'marker_cbox');
+
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

@@ -37,7 +37,10 @@ class Main extends CI_Controller {
 
 		// 3) Loads the query results into a temporary CSV file
 		$csv_file_download_link = "";
-		$csv_file_download_link = $this->maizedao->load_query_results_into_csv_file($query, $report_type);
+
+		// For genomic information, we need to really complex dynamic SQL processing
+		$is_genomic_info_reqd = array_key_exists(IS_GENOMIC_INFO_REQD, $form_vars) ? True : False;
+		$csv_file_download_link = $this->maizedao->load_query_results($query, $report_type, $is_genomic_info_reqd);
 
 		$num_results = $this->maizedao->get_results_count($csv_file_download_link);
 
@@ -103,15 +106,9 @@ class Main extends CI_Controller {
 		} 
 
 		// get the phenotype genomic information
-		foreach($this->input->post() as $form_key=>$form_value) {
-			if(strpos($form_key, "_marker_cbox") > 0) {
-				if($this->input->post($form_key) == "on") {
-					// strip off the marker to indicate phenotype metadata
-					$new_key = str_replace("_marker_cbox", "", $form_key);
-					$form_vars[$new_key] = $new_key;
-				}
-			}
-		} 
+		if($this->input->post(IS_GENOMIC_INFO_REQD) == "on") {
+			$form_vars[IS_GENOMIC_INFO_REQD] = TRUE;
+		}
 
 		// get the population type filter
 		if($this->input->post('filter_type_value') != "ALL") {

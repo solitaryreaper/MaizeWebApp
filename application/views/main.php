@@ -173,20 +173,10 @@
 	<!-- Contains all the phenotypes which can be chosen -->
 	<table class="table table-bordered table-hover table-condensed">
 	<thead>
-		<th colspan="3">Step 3.1 <i class="icon-arrow-right"></i> Choose genomic information</th>
+		<th colspan="3">Step 3.1 <i class="icon-arrow-right"></i> 
+			<input type="checkbox" id="marker_cbox" name="marker_cbox"> Show genomic information
+		</th>
 	</thead>
-	<tbody>
-		<tr>
-			<td>
-				<input type="checkbox" id="name_marker_cbox" name="name_marker_cbox"> Marker Type Name
-			</td>
-			<td>
-				<input type="checkbox" id="chromosome_marker_cbox" name="chromosome_marker_cbox"> Marker Type Chromosome
-			</td>			
-			<td>
-				<input type="checkbox" id="map_location_marker_cbox" name="map_location_marker_cbox"> Marker Type Map Location
-			</td>
-		</tr>
 	</tbody>
 	</table>
 

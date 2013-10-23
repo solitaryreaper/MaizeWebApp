@@ -20,8 +20,6 @@ class Queryutils extends CI_Model {
 			"spectra_light_tube" => "raw_weights_spectra_vw.spectra_light_tube", "spectra_operator" => "raw_weights_spectra_vw.spectra_operator"
 	);
 
-    // "name" => "marker_types.name", "chromosome" => "marker_types.chromosome", "map_location" => "marker_types.map_location"      
-
     function __construct() {
     	// call parent's constructor
     	parent::__construct();
@@ -117,6 +115,7 @@ class Queryutils extends CI_Model {
 
     	$phenotype_query_select_clause = "";
     	if(!$this->is_aggregate_function_report($form_vars)) {
+            log_message("info", "## Non Aggregate function !!");
     		$excluded_columns = array("kernel_id1");
     		$phenotype_metadata_select_string = 
     			$this->get_query_display_columns($phenotype_metadata_query, 'pmeta.', '', $excluded_columns, 'SELECT');
@@ -126,6 +125,7 @@ class Queryutils extends CI_Model {
     		$phenotype_query_select_clause = $phenotype_metadata_select_string . " , " . $phenotype_measurement_select_string;
     	}
     	else {
+            log_message("info", "## Aggregate function !!");            
    			$excluded_columns = array("kernel_id", "kernel_id1");
    			$aggregate_function = $this->get_aggregate_function($form_vars);
 
@@ -163,7 +163,7 @@ class Queryutils extends CI_Model {
     private function is_aggregate_function_report($form_vars)
     {
     	if(in_array('Raw Weight/Spectra', $form_vars) || in_array('Raw Phenotypes', $form_vars)) {
-    		return false;
+    		return true; // Temp HACK
     	}
     	else {
     		return true;
@@ -190,7 +190,7 @@ class Queryutils extends CI_Model {
     {
     	$start_time = microtime(true);
         // 1) Dynamically generate the SELECT clause based on the chosen genotype metadata
-    	$subquery_select_clause = "SELECT kernels.id AS kernel_id ";
+    	$subquery_select_clause = "SELECT kernels.id AS kernel_id, population.id AS population_line_id ";
     	foreach($form_vars as $form_key => $form_value) {
     		if(array_key_exists($form_key, Queryutils::$phenotype_metadata_map)) {
     			$subquery_select_clause .= " , " . Queryutils::$phenotype_metadata_map[$form_value];
@@ -413,4 +413,23 @@ class Queryutils extends CI_Model {
         return $table_abbrev;
     }
 
+    // ---------------- Dynamic query generation for genotype information -------------------------
+
+    // Query that returns all the genomic information
+    public function get_all_genomic_metadata_query()
+    {
+        return "SELECT name, chromosone AS chromosome, map_location FROM marker_types WHERE map_location != 0 AND type='IBM_RILs' ORDER BY 1 ";
+    }
+
+    public function get_population_lines_genomic_meta_query()
+    {
+        $query =  " SELECT m.population_line_id, mt.name AS marker_name, CAST(m.value AS text) AS marker_value  " ;
+        $query .= " FROM marker_types mt "; 
+        $query .= " JOIN markers m " ;
+        $query .= " ON (m.marker_type_id = mt.id) ";
+        $query .= " WHERE mt.map_location != 0 AND type = 'IBM_RILs' ";
+        $query .= " ORDER BY 1,2 ";
+
+        return $query;
+    }
  }
