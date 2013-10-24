@@ -99,13 +99,6 @@ class Maizedao extends CI_Model
     {
         log_message("info", "Decorating phenotype results with genomic info ..");
         
-        // Slight optimization : Run phenotype query first. Only if it returns any rows, then proceed
-        // to fetch genomic metadata.
-        
-        // Get the genomic data
-        $header_rows                 = $this->get_genomic_header_rows();
-        $population_genomic_crosstab = $this->get_population_genomic_meta_crosstab($header_rows['NAME']);
-        
         // Get the phenotype data
         $start_time = microtime(true);
         $db_results = $this->db->query($query);
@@ -113,26 +106,33 @@ class Maizedao extends CI_Model
         foreach ($db_results->list_fields() as $field) {
             array_push($db_header, $field);
         }
-        
+        $is_empty_results = $db_results->num_rows() > 0 ? false : true; 
+
+        $header_rows = $this->get_genomic_header_rows();
         $joined_results = array();
-        $empty_genomic_info_filler_row = array_fill(0, count($header_rows['NAME']), "");
-        foreach ($db_results->result() as $pid_row) {
-            $pid    = $pid_row->population_line_id;
-            $db_row = array();
-            foreach ($pid_row as $pid_field) {
-                $db_row[] = $pid_field;
+        if(!$is_empty_results) {
+            // Get the genomic data crosstab keyed by population id. This is an expensive query, so only run
+            // this if there is some data to match the crosstab data to.
+            $population_genomic_crosstab = $this->get_population_genomic_meta_crosstab($header_rows['NAME']);         
+
+            $empty_genomic_info_filler_row = array_fill(0, count($header_rows['NAME']), "");
+            foreach ($db_results->result() as $pid_row) {
+                $pid    = $pid_row->population_line_id;
+                $db_row = array();
+                foreach ($pid_row as $pid_field) {
+                    $db_row[] = $pid_field;
+                }
+                if (array_key_exists($pid, $population_genomic_crosstab)) {
+                    $pid_genomic_info = $population_genomic_crosstab[$pid];
+                    array_push($joined_results, array_merge($db_row, $pid_genomic_info));
+                } else {
+                    array_push($joined_results, array_merge($db_row, $empty_genomic_info_filler_row));                
+                }
             }
-            if (array_key_exists($pid, $population_genomic_crosstab)) {
-                $pid_genomic_info = $population_genomic_crosstab[$pid];
-                array_push($joined_results, array_merge($db_row, $pid_genomic_info));
-                log_message('info', "## PID is present : " . $pid);
-            } else {
-                array_push($joined_results, array_merge($db_row, $empty_genomic_info_filler_row));                
-                log_message('info', "## PID not present : " . $pid);
-            }
+            $end_time = microtime(true);
+            log_message("info", "Time taken to fetch db results : " . ($end_time - $start_time) . " seconds => " . count($joined_results));
         }
-        $end_time = microtime(true);
-        log_message("info", "Time taken to fetch db results : " . ($end_time - $start_time) . " seconds => " . count($joined_results));
+
         
         $start_time                  = microtime(true);
         $empty_db_header_clone_array = array_fill(0, count($db_header), "");
