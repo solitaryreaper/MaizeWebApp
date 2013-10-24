@@ -6,18 +6,18 @@
  */
 class Main extends CI_Controller {
 
-    function __construct() {
-        parent::__construct();
+	function __construct() {
+		parent::__construct();
 
-   		$this->load->helper('form');
-   		$this->load->helper('url');
+		$this->load->helper('form');
+		$this->load->helper('url');
 
-        $this->load->model('maizedao');
-        $this->load->model('queryutils');
-        $this->load->model('csvutils');
+		$this->load->model('maizedao');
+		$this->load->model('queryutils');
+		$this->load->model('csvutils');
 
-        $this->load->library('sqlformatter');
-    }
+		$this->load->library('sqlformatter');
+	}
 
 	public function index()
 	{
@@ -41,21 +41,35 @@ class Main extends CI_Controller {
 		// For genomic information, we need to really complex dynamic SQL processing
 		$is_genomic_info_reqd = array_key_exists(IS_GENOMIC_INFO_REQD, $form_vars) ? True : False;
 		log_message("info", "IS genome info ? " . $is_genomic_info_reqd);
+
 		$csv_file_download_link = $this->maizedao->load_query_results($query, $report_type, $is_genomic_info_reqd);
-
-		$num_results = $this->maizedao->get_results_count($csv_file_download_link);
-
-		// 4) Drop any temporary tables created for intermediate processing
-		$this->maizedao->drop_temporary_tables();
-
-		// 5) Convert data to CSV format for download, only if number of db rows generated is non-zero
-		if($num_results > 0) {
-			log_message('info', "CSV file : " . $csv_file_download_link);
+		$num_results = 0;
+		log_message("info", "CSV download link : " . $csv_file_download_link);
+		if(!is_null($csv_file_download_link)) {
+			$num_results = $this->maizedao->get_results_count($csv_file_download_link);
+		}
+		else {
+			log_message("error", "CSV file not generated. Please look into the issue !!");
 		}
 
+		// 4) Convert data to CSV format for download, only if number of db rows generated is non-zero
+		if($num_results > 0) {
+			// Genomic information has three header rows in CSV file.
+			if($is_genomic_info_reqd) {
+				$num_results = $num_results - 3;
+			}
+			// Normal report has one header row in CSV file.
+			else {
+				$num_results = $num_results - 1;
+			}
+		}
+
+		// 5) Drop any temporary tables created for intermediate processing
+		$this->maizedao->drop_temporary_tables();
+
 		// 6) Render the results page
-		$results_data = array("count" => ($num_results-1), "csv_file_path" => $csv_file_download_link, 
-		"query" => $this->sqlformatter->format($query), "report_type" => $report_type);
+		$results_data = array("count" => ($num_results), "csv_file_path" => $csv_file_download_link, 
+			"query" => $this->sqlformatter->format($query), "report_type" => $report_type);
 
 		$this->load->view('results', $results_data);
 	}
@@ -110,6 +124,7 @@ class Main extends CI_Controller {
 		// get the phenotype genomic information
 		if($this->input->post(IS_GENOMIC_INFO_REQD) == "on") {
 			$form_vars[IS_GENOMIC_INFO_REQD] = IS_GENOMIC_INFO_REQD;
+			log_message("info", "Genomic info metadata present !!");
 		}
 
 		// get the population type filter
@@ -130,8 +145,6 @@ class Main extends CI_Controller {
 			$form_vars['filter_packet_option'] = $this->input->post('filter_packet_option');			
 			$form_vars['filter_packet_value'] = $filter_packet_value;
 		}		
-
-		log_message('info', "Extracted form variables : " . print_r($form_vars));
 
 		return $form_vars;
 	}

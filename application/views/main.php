@@ -29,12 +29,11 @@
 				<th>
 					<div class="control-group">  
             		<div class="controls">  
-              		<select id="report_type" name="report_type">  
-	                	<option></option>  
+              		<select id="report_type" name="report_type">
+	                	<option selected>Average Phenotypes</option> 
+	                	<option>Standard Deviation Phenotypes</option> 	               		
 	                	<option>Raw Weight/Spectra</option>  
 	                	<option>Raw Phenotypes</option>  
-	                	<option>Average Phenotypes</option> 
-	                	<option>Standard Deviation Phenotypes</option> 	                		                	
               		</select>  
             		</div>  
           			</div>
@@ -195,7 +194,7 @@
 			</td>
             <td>
                 <select id="filter_type_value" name="filter_type_value">
-					<option>ALL</option>
+					<option selected>ALL</option>
 					<option>test</option>
 					<option>calibration</option>
 					<option>cleaning</option>
@@ -253,13 +252,28 @@
 
 	<script>
 
+	// Apply the default page display when the page loads based on the default report type
+	$(document).ready(function() {
+		var default_report_type = $("#report_type").find('option:selected').text();
+		change_display(default_report_type);
+	});
+
 	// Dynamically change form based on the select report type value chosen in dropdown
-	$( "#report_type" ).change(function() {
+	$("#report_type").on('change', function() {
 		var report_type = $(this).val();
+		change_display(report_type);
+	});
+
+	// Changes the display of the web page based on the report chosen
+	function change_display(report_type)
+	{
 		change_phenotype_display(report_type);
 		change_phenotype_metadata_display(report_type);
 		change_phenotype_genomic_metadata_display(report_type);
-	});
+
+		// change the filter value to a default value
+		$("#filter_type_value").val("ALL");
+	}
 
 	// Modifies the display behaviour of phenotype checkboxes based on report type.
 	function change_phenotype_display(report_type)
@@ -284,8 +298,19 @@
 	{
 		var phenotype_metadata_tags = $("[id$='_meta_cbox']");
 		phenotype_metadata_tags.removeAttr('checked');		
-		if(report_type == "" || report_type == "Raw Weight/Spectra" || report_type == "Raw Phenotypes") {
+		if(report_type == "Raw Weight/Spectra") {
 			phenotype_metadata_tags.parent().show(); // Show all the tags
+		}
+		else if(report_type == "Raw Phenotypes") {
+			phenotype_metadata_tags.parent().show(); // Show all the tags
+
+			// Hide all weight/spectra related metadata attributes
+			$("#weights_repetition_meta_cbox").parent().hide();
+			$("#weights_idx_meta_cbox").parent().hide();
+			$("#spectra_repetition_meta_cbox").parent().hide();
+			$("#spectra_idx_meta_cbox").parent().hide();
+			$("#light_tube_meta_cbox").parent().hide();
+			$("#operator_meta_cbox").parent().hide();						
 		}
 		else {
 			phenotype_metadata_tags.parent().hide(); // Hide all the tags first

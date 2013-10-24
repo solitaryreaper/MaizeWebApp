@@ -59,5 +59,6 @@ define('POPULATION_LINES', 'population_lines');
 
 define('IS_GENOMIC_INFO_REQD', 'marker_cbox');
 
+define('PHP_EXECUTE', '/usr/bin/php');
 /* End of file constants.php */
 /* Location: ./application/config/constants.php */

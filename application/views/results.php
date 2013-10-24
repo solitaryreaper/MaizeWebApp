@@ -11,7 +11,10 @@
 </head>
 <body>
 	<header class="well">
-		<h1 align="center"><strong>MAIZE DATA GENERATION RESULTS SUMMARY </strong></h1>
+		<h1 align="center">
+			<strong>MAIZE DATA GENERATION RESULTS SUMMARY </strong>
+			<a class="pull-right" href="<?php echo(URL); ?>"><img src="<?php echo(IMG.'home_icon_small.png'); ?>"></a>
+		</h1>
 	</header>
 
 	<div class="container">

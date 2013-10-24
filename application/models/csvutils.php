@@ -11,15 +11,7 @@ class Csvutils extends CI_Model {
     // Generic function that generates a CSV file out of database results
     function generate_csv_file($db_results, $report_type)
     {
-        // remove all whitespaces from string
-        $report_type_suffix = str_replace(" ", '_', $report_type);
-        $report_type_suffix = str_replace('/', '_', $report_type);
-        $report_type_suffix = trim($report_type_suffix);
-
-	// add a constant at the end
-        $report_type_suffix .= "_" . rand(0, 10000);
-
-        $file_name = "maize_results_" . strtolower($report_type_suffix) . ".csv";
+        $file_name = $this->get_temp_csv_file_name($report_type);
         $file_dir = getcwd() . "/data/temp_csv_files/";
 
         log_message('info', "Writing file to path .. " . $file_dir . $file_name);
@@ -32,20 +24,35 @@ class Csvutils extends CI_Model {
         }
 
         foreach ($db_results as $result) {
-	    $row = array();
-	    log_message("info", "Type : " . gettype($result));
-            $log_my_error = var_export($result, TRUE);
-	    $log_my_error = str_replace(array("\r","\n"), '', $log_my_error); 
-	    foreach($result as $result_col) {
-                $row[] = $result_col;
-            }
-	    log_message("info", "Debug## => " . $log_my_error);
-            fputcsv($output, $row);
+           $row = array();
+           log_message("info", "Type : " . gettype($result));
+           $log_my_error = var_export($result, TRUE);
+           $log_my_error = str_replace(array("\r","\n"), '', $log_my_error); 
+           foreach($result as $result_col) {
+            $row[] = $result_col;
         }
-
-        fclose($output);
-
-        return TEMP_CSV_FILES_DIRECTORY . $file_name;
+        log_message("info", "Debug## => " . $log_my_error);
+        fputcsv($output, $row);
     }
 
+    fclose($output);
+
+    return TEMP_CSV_FILES_DIRECTORY . $file_name;
+}
+
+    // Returns the name of the temporary csv file to be used for loading data.
+public function get_temp_csv_file_name($report_type)
+{
+        // remove all whitespaces from string
+    $report_type_suffix = str_replace(" ", '_', $report_type);
+    $report_type_suffix = str_replace('/', '_', $report_type_suffix);
+    $report_type_suffix = trim($report_type_suffix);
+
+        // add a constant at the end
+    $report_type_suffix .= "_" . rand(0, 10000);
+
+    $file_name = "maize_results_" . strtolower($report_type_suffix) . ".csv";
+
+    return $file_name;
+}
 }
