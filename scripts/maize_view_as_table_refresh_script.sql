@@ -7,7 +7,6 @@
 */
 
 -- Update raw_weights_spectra_tbl
-
 DROP TABLE raw_weights_spectra_tbl;
 
 SELECT * INTO raw_weights_spectra_tbl FROM raw_weights_spectra_vw;
@@ -36,5 +35,17 @@ DROP TABLE root_tip_measurements_crosstab;
 
 SELECT * FROM generate_root_tip_crosstab('root_tip_measurements', 'root_tip_measurements_crosstab'); 
 CREATE INDEX root_tip_ct_ix ON root_tip_measurements_crosstab(kernel_id);
+
+-- Update root length crosstab table
+DROP TABLE root_length_crosstab;
+
+SELECT * FROM generate_root_length_crosstab('root_length', 'root_length_crosstab');
+CREATE INDEX root_length_ct_ix ON root_length_crosstab(kernel_id);
+
+-- Update root growth rate crosstab table
+DROP TABLE root_growth_rate_crosstab;
+
+SELECT * FROM generate_root_length_crosstab('root_growth_rate', 'root_growth_rate_crosstab');
+CREATE INDEX root_growth_rate_ct_ix ON root_growth_rate_crosstab(kernel_id);
 
 

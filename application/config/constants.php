@@ -48,6 +48,8 @@ define('KERNEL_3D_TABLE', 'kernel_3d');
 define('KERNEL_DIMENSIONS_TABLE', 'kernel_dims_tbl');
 define('PREDICTIONS_TABLE', 'predictions');
 define('ROOT_TIP_MEASUREMENTS_TABLE', 'root_tip_measurements_crosstab');
+define('ROOT_LENGTH_TABLE', 'root_length_crosstab');
+define('ROOT_GROWTH_RATE_TABLE', 'root_growth_rate_crosstab');
 define('RAW_WEIGHT_SPECTRA_TABLE', 'raw_weights_spectra_tbl');
 define('AVG_WEIGHT_SPECTRA_TABLE', 'avg_weights_spectra_tbl');
 define('STD_WEIGHT_SPECTRA_TABLE', 'std_weights_spectra_tbl');

@@ -70,6 +70,14 @@
                 <input type="checkbox" id="std_weight_spectra_phenotype_cbox" name="std_weight_spectra_phenotype_cbox"> Standard Deviation Weight Spectra
             </td>                        			
 		</tr>
+		<tr>
+			<td>
+				<input type="checkbox" id="root_length_phenotype_cbox" name="root_length_phenotype_cbox"> Root Length
+			</td>
+			<td>
+				<input type="checkbox" id="root_growth_rate_phenotype_cbox" name="root_growth_rate_phenotype_cbox"> Root Growth Rate
+			</td>			
+		</tr>		
 	</tbody>
 	</table>
 
