@@ -362,7 +362,7 @@
             $subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k7.kernel_id) ";
         }
         $last_phenotype_alias = "k9";
-        $included_tables_map[ROOT_GROWTH_TABLE] = "k9";                  
+        $included_tables_map[ROOT_GROWTH_RATE_TABLE] = "k9";                  
     }                 
 
     $subquery_select_clause = " SELECT ";

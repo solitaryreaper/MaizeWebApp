@@ -83,7 +83,6 @@ class Main extends CI_Controller {
 
 		// get the report type chosen
 		$form_vars['report_type'] = trim($this->input->post('report_type'));
-		log_message("info", " ## Report Type : " . $this->input->post('report_type'));
 
 		// get the phenotypes selected and map them to their database tables
 		if($this->input->post('kernel_3d_phenotype_cbox') == "on") {
@@ -107,6 +106,12 @@ class Main extends CI_Controller {
 		if($this->input->post('std_weight_spectra_phenotype_cbox') == "on") {
 			$form_vars['std_weight_spectra'] = STD_WEIGHT_SPECTRA_TABLE;
 		}
+		if($this->input->post('root_length_phenotype_cbox') == "on") {
+			$form_vars['root_length'] = ROOT_LENGTH_TABLE;
+		}
+		if($this->input->post('root_growth_rate_phenotype_cbox') == "on") {
+			$form_vars['root_growth_rate'] = ROOT_GROWTH_RATE_TABLE;
+		}				
 
 		// get the phenotypes metadata to show
 		// HACK : pheontype metadata has been encoded as <metadata_name>_meta_cbox to easily 
