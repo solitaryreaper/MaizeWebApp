@@ -2,7 +2,7 @@
 
 // DB wrapper to get relevant data from maize database.
 class Csvutils extends CI_Model {
-    
+
     function __construct() {
     	// call parent's constructor
     	parent::__construct();
@@ -25,13 +25,10 @@ class Csvutils extends CI_Model {
 
         foreach ($db_results as $result) {
            $row = array();
-           log_message("info", "Type : " . gettype($result));
-           $log_my_error = var_export($result, TRUE);
-           $log_my_error = str_replace(array("\r","\n"), '', $log_my_error); 
            foreach($result as $result_col) {
             $row[] = $result_col;
         }
-        log_message("info", "Debug## => " . $log_my_error);
+
         fputcsv($output, $row);
     }
 

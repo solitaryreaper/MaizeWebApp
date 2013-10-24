@@ -115,7 +115,7 @@ class Maizedao extends CI_Model
         }
         
         $joined_results = array();
-        $empty_genomic_info_filler_row = array_fill(0, count($header_rows['NAME']), "*");
+        $empty_genomic_info_filler_row = array_fill(0, count($header_rows['NAME']), "");
         foreach ($db_results->result() as $pid_row) {
             $pid    = $pid_row->population_line_id;
             $db_row = array();
@@ -135,7 +135,7 @@ class Maizedao extends CI_Model
         log_message("info", "Time taken to fetch db results : " . ($end_time - $start_time) . " seconds => " . count($joined_results));
         
         $start_time                  = microtime(true);
-        $empty_db_header_clone_array = array_fill(0, count($db_header), "*");
+        $empty_db_header_clone_array = array_fill(0, count($db_header), "");
         $final_op_header_row_1       = array_merge($db_header, $header_rows['NAME']);
         $final_op_header_row_2       = array_merge($empty_db_header_clone_array, $header_rows['CHROMOSOME']);
         $final_op_header_row_3       = array_merge($empty_db_header_clone_array, $header_rows['MAP_LOCATION']);
