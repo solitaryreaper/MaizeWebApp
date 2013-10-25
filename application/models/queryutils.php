@@ -25,7 +25,7 @@ class Queryutils extends CI_Model
         "weights_repetition" => "raw_weights_spectra_tbl.weights_repetition", 
         "weights_idx" => "raw_weights_spectra_tbl.weights_idx", 
         "spectra_repetition" => "raw_weights_spectra_tbl.spectra_repetition", 
-        "raw_weights_spectra_tbl.spectra_idx" => "spectra_idx", 
+        "spectra_idx" => "raw_weights_spectra_tbl.spectra_idx", 
         "spectra_light_tube" => "raw_weights_spectra_tbl.spectra_light_tube", 
         "spectra_operator" => "raw_weights_spectra_tbl.spectra_operator",
         "fileloc" => "files.fileloc"
@@ -130,7 +130,8 @@ class Queryutils extends CI_Model
         $phenotype_query_select_clause = "";
         if (!$this->is_aggregate_function_report($form_vars)) {
             $excluded_columns                    = array(
-                "kernel_id1"
+                "kernel_id1",
+                "population_line_id"
             );
             $phenotype_metadata_select_string    = $this->get_query_display_columns($phenotype_metadata_query, 'pmeta.', '', $excluded_columns, 'SELECT');
             $phenotype_measurement_select_string = $this->get_query_display_columns($phenotype_measurement_query, 'pfacts.', '', $excluded_columns, 'SELECT');
@@ -290,10 +291,10 @@ class Queryutils extends CI_Model
 
         $subquery_select_clause = " SELECT ";
         foreach ($included_tables_map as $table_name => $table_alias) {
-            $subquery_select_clause .= $this->get_fact_columns_for_phenotype($table_name, $table_alias) . " , ";
+            $subquery_select_clause .= $this->get_fact_columns_for_phenotype($table_name, $table_alias, $form_vars) . " , ";
         }
         // TODO : Add hacky logic to handle file location attribute here
-        
+
         log_message('info', "Phenotype subquery body : " . $subquery_body);
         
         $included_tables_aliases = array_values($included_tables_map);
@@ -309,7 +310,7 @@ class Queryutils extends CI_Model
     // Get all the measurement data columns for this phenotype
     private function get_fact_columns_for_phenotype($phenotype_table, $phenotype_query_prefix, $form_vars)
     {
-        $phenotype_select_query = " SELECT column_name  AS col_name " . " FROM information_schema.columns " . " WHERE table_catalog='maize' AND table_name = '" . $phenotype_table . "' AND " . " data_type IN ('integer', 'double precision') AND " . " column_name NOT IN ('id', 'kernel_id') " . " ORDER BY ordinal_position ";
+        $phenotype_select_query = " SELECT column_name  AS col_name " . " FROM information_schema.columns " . " WHERE table_catalog='maize' AND table_name = '" . $phenotype_table . "' AND " . " column_name NOT IN ('id', 'kernel_id', 'repetitions') " . " ORDER BY ordinal_position ";
         log_message('info', "Query fired to get measurement data " . $phenotype_select_query);
         
         // get a comma separated list of field values
@@ -319,11 +320,13 @@ class Queryutils extends CI_Model
         foreach ($query_output->result() as $row) {
             $col_name = $row->col_name;
 
-            // If the current column is a non-fact column in phenotype table and has not been
-            // checkboxed on the web page, then don't show this column.
-            if( array_key_exists($col_name, $phenotype_non_fact_columns_map) && 
+            // Phenotype tables often have some pseudo non-factual meta columns. Those should be
+            // included in the output only if they have been checked on the web page. Rest all
+            // fact columns should always be included as they contain the actual measurement data.
+            if( array_key_exists($col_name, Queryutils::$phenotype_non_fact_columns_map) && 
                 !array_key_exists($col_name, $form_vars)) 
             {
+                log_message("info", "Skipped phenotype non-fact column " . $col_name . " for table " . $phenotype_table);
                 continue;
             }
 

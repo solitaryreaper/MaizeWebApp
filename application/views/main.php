@@ -170,10 +170,10 @@
                 <input type="checkbox" id="spectra_idx_meta_cbox" name="spectra_idx_meta_cbox"> Spectra IDX
             </td>
             <td>
-                <input type="checkbox" id="light_tube_meta_cbox" name="light_tube_meta_cbox"> Light Tube
+                <input type="checkbox" id="spectra_light_tube_meta_cbox" name="spectra_light_tube_meta_cbox"> Light Tube
             </td>
             <td>
-                <input type="checkbox" id="operator_meta_cbox" name="operator_meta_cbox"> Operator
+                <input type="checkbox" id="spectra_operator_meta_cbox" name="spectra_operator_meta_cbox"> Operator
             </td>
 		</tr>						
 	</tbody>
