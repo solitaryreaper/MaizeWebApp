@@ -244,7 +244,7 @@ class Queryutils extends CI_Model
     {
         $regex_value = "";
         if ($operator == "EQUALS") {
-            $regex_value = " = " . $value;
+            $regex_value = " = '" . $value . "'";
         } else if ($operator == "CONTAINS") {
             $regex_value = " LIKE '%" . $value . "%'";
         } else if ($operator == "STARTS WITH") {
