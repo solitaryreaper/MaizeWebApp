@@ -24,13 +24,13 @@ else
 fi
 
 # invoke the database refresh script
-#psql -U maizeuser -f maize_view_as_table_refresh_script.sql
-#OUT=$?
-#if [$OUT -eq 0];then
-# 	run_logs =  " $run_logs \n Refreshed crosstab tables in maize database .."
-#else
-# 	run_logs = " $run_logs \n Failed to refresh crosstab tables in maize database .."
-#fi
+psql -U maizeuser -f maize_view_as_table_refresh_script.sql
+OUT=$?
+if [$OUT -eq 0];then
+	run_logs =  " $run_logs \n Refreshed crosstab tables in maize database .."
+else
+	run_logs = " $run_logs \n Failed to refresh crosstab tables in maize database .."
+fi
 
 # mail the logs of the run
 dt=`date`

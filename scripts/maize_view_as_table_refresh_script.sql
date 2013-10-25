@@ -45,7 +45,7 @@ CREATE INDEX root_length_ct_ix ON root_length_crosstab(kernel_id);
 -- Update root growth rate crosstab table
 DROP TABLE root_growth_rate_crosstab;
 
---SELECT * FROM generate_root_length_crosstab('root_growth_rate', 'root_growth_rate_crosstab');
+SELECT * FROM generate_root_length_crosstab('root_growth_rate', 'root_growth_rate_crosstab');
 CREATE INDEX root_growth_rate_ct_ix ON root_growth_rate_crosstab(kernel_id);
 
 
