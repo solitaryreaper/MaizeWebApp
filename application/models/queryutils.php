@@ -6,8 +6,40 @@ class Queryutils extends CI_Model
 {
     
     // Define a mapping of the phenotype metadata to the actual <table>.<column name> in maize database
-    public static $phenotype_metadata_map = array("isolate" => "population.isolate", "population_type" => "population.type", "plate_name" => "plates.plate_name", "culture" => "plates.culture", "ear_number" => "plates.ear_number", "growing_season" => "plates.growing_season", "field_year" => "plates.field_year", "male_parent" => "plates.male_parent", "female_parent" => "plates.female_parent", "male_parent_name" => "plates.male_parent_name", "female_parent_name" => "plates.female_parent_name", "family" => "plates.family", "genotype" => "plates.genotype", "notes" => "plates.notes", "crossing_instructions" => "plates.crossing_instructions", "packet_name" => "plates.packet_name", "collaborator" => "plates.collaborator", "plate_position" => "kernels.plate_position", "cob_position_x" => "kernels.cob_position_x", "cob_position_y" => "kernels.cob_position_y", "weights_repetition" => "raw_weights_spectra_vw.weights_repetition", "weights_idx" => "raw_weights_spectra_vw.weights_idx", "spectra_repetition" => "raw_weights_spectra_vw.spectra_repetition", "raw_weights_spectra_vw.spectra_idx" => "spectra_idx", "spectra_light_tube" => "raw_weights_spectra_vw.spectra_light_tube", "spectra_operator" => "raw_weights_spectra_vw.spectra_operator");
+    public static $phenotype_metadata_map = array(
+        "isolate" => "population.isolate", "population_type" => "population.type", 
+        "plate_name" => "plates.plate_name", "culture" => "plates.culture", 
+        "ear_number" => "plates.ear_number", "growing_season" => "plates.growing_season", 
+        "field_year" => "plates.field_year", "male_parent" => "plates.male_parent", 
+        "female_parent" => "plates.female_parent", "male_parent_name" => "plates.male_parent_name", 
+        "female_parent_name" => "plates.female_parent_name", "family" => "plates.family", 
+        "genotype" => "plates.genotype", "notes" => "plates.notes", 
+        "crossing_instructions" => "plates.crossing_instructions", 
+        "packet_name" => "plates.packet_name", "collaborator" => "plates.collaborator", 
+        "plate_position" => "kernels.plate_position", "cob_position_x" => "kernels.cob_position_x", 
+        "cob_position_y" => "kernels.cob_position_y"
+    );
     
+    // Defines a mapping of phenotype table non factual columns
+    public static $phenotype_non_fact_columns_map = array(
+        "weights_repetition" => "raw_weights_spectra_tbl.weights_repetition", 
+        "weights_idx" => "raw_weights_spectra_tbl.weights_idx", 
+        "spectra_repetition" => "raw_weights_spectra_tbl.spectra_repetition", 
+        "raw_weights_spectra_tbl.spectra_idx" => "spectra_idx", 
+        "spectra_light_tube" => "raw_weights_spectra_tbl.spectra_light_tube", 
+        "spectra_operator" => "raw_weights_spectra_tbl.spectra_operator",
+        "fileloc" => "files.fileloc"
+    );
+
+    // Defines a mapping of form phenotype table identifier to actual db table name
+    public static $form_key_to_table_map = array(
+        "kernel_3d" => KERNEL_3D_TABLE, "predictions" => PREDICTIONS_TABLE, 
+        "root_tip_measurements" => ROOT_TIP_MEASUREMENTS_TABLE, "raw_weight_spectra" => RAW_WEIGHT_SPECTRA_TABLE, 
+        "avg_weight_spectra" => AVG_WEIGHT_SPECTRA_TABLE, "std_weight_spectra" => STD_WEIGHT_SPECTRA_TABLE, 
+        "kernel_dims" => KERNEL_DIMENSIONS_TABLE, "root_length" => ROOT_LENGTH_TABLE,
+        "root_growth_rate" => ROOT_GROWTH_RATE_TABLE
+    );
+
     function __construct()
     {
         // call parent's constructor
@@ -97,7 +129,6 @@ class Queryutils extends CI_Model
         
         $phenotype_query_select_clause = "";
         if (!$this->is_aggregate_function_report($form_vars)) {
-            log_message("info", "## Non Aggregate function !!");
             $excluded_columns                    = array(
                 "kernel_id1"
             );
@@ -106,7 +137,6 @@ class Queryutils extends CI_Model
             
             $phenotype_query_select_clause = $phenotype_metadata_select_string . " , " . $phenotype_measurement_select_string;
         } else {
-            log_message("info", "## Aggregate function !!");
             $excluded_columns   = array(
                 "kernel_id",
                 "kernel_id1"
@@ -145,12 +175,6 @@ class Queryutils extends CI_Model
     // Determines if the chosen report involves data aggregation or not
     private function is_aggregate_function_report($form_vars)
     {
-        $log_my_error = var_export($form_vars, TRUE);
-        $log_my_error = str_replace(array(
-            "\r",
-            "\n"
-        ), '', $log_my_error);
-        log_message("info", "Function Debug## => " . $log_my_error);
         if (in_array('Raw Weight/Spectra', $form_vars) || in_array('Raw Phenotypes', $form_vars)) {
             return false;
         } else {
@@ -238,115 +262,41 @@ class Queryutils extends CI_Model
         $start_time           = microtime(true);
         $last_phenotype_alias = null;
         
-        // TODO : Too much code duplication. This can be condensed.
         $subquery_body       = "";
         $included_tables_map = array();
-        if (array_key_exists('kernel_3d', $form_vars)) {
-            $subquery_body .= $this->get_phenotype_table($form_vars['kernel_3d']) . " k1 ";
-            $last_phenotype_alias                 = "k1";
-            $included_tables_map[KERNEL_3D_TABLE] = "k1";
-        }
-        if (array_key_exists('predictions', $form_vars)) {
+
+        $table_alias_counter = 1;
+        foreach(Queryutils::$form_key_to_table_map as $form_key => $table_name) {
+            log_message("info", "Key : " . $form_key . ", Table : " . $table_name);
+            if (!array_key_exists($form_key, $form_vars)) {
+                continue;
+            }
+
             if (isset($last_phenotype_alias)) {
                 $subquery_body .= " FULL OUTER JOIN ";
             }
-            $subquery_body .= $this->get_phenotype_table($form_vars['predictions']) . " k2 ";
+
+            $table_alias_name = "k" . $table_alias_counter;
+            $subquery_body .= $table_name . "  " . $table_alias_name;
             if (isset($last_phenotype_alias)) {
-                $subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k2.kernel_id) ";
+                $subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = " . $table_alias_name . ".kernel_id) ";
             }
-            $last_phenotype_alias                   = "k2";
-            $included_tables_map[PREDICTIONS_TABLE] = "k2";
+            $last_phenotype_alias = $table_alias_name;
+            $included_tables_map[$table_name] = $table_alias_name;
+            $table_alias_counter = $table_alias_counter + 1;
         }
-        if (array_key_exists('root_tip_measurements', $form_vars)) {
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " FULL OUTER JOIN ";
-            }
-            $subquery_body .= $this->get_phenotype_table($form_vars['root_tip_measurements']) . " k3 ";
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k3.kernel_id) ";
-            }
-            $last_phenotype_alias                             = "k3";
-            $included_tables_map[ROOT_TIP_MEASUREMENTS_TABLE] = "k3";
-        }
-        if (array_key_exists('raw_weight_spectra', $form_vars)) {
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " FULL OUTER JOIN ";
-            }
-            $subquery_body .= $this->get_phenotype_table($form_vars['raw_weight_spectra']) . " k4 ";
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k4.kernel_id) ";
-            }
-            $last_phenotype_alias                          = "k4";
-            $included_tables_map[RAW_WEIGHT_SPECTRA_TABLE] = "k4";
-        }
-        if (array_key_exists('avg_weight_spectra', $form_vars)) {
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " FULL OUTER JOIN ";
-            }
-            $subquery_body .= $this->get_phenotype_table($form_vars['avg_weight_spectra']) . " k5 ";
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k5.kernel_id) ";
-            }
-            $last_phenotype_alias                          = "k5";
-            $included_tables_map[AVG_WEIGHT_SPECTRA_TABLE] = "k5";
-        }
-        if (array_key_exists('std_weight_spectra', $form_vars)) {
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " FULL OUTER JOIN ";
-            }
-            $subquery_body .= $this->get_phenotype_table($form_vars['std_weight_spectra']) . " k6 ";
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k6.kernel_id) ";
-            }
-            $last_phenotype_alias                          = "k6";
-            $included_tables_map[STD_WEIGHT_SPECTRA_TABLE] = "k6";
-        }
-        if (array_key_exists('kernel_dims', $form_vars)) {
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " FULL OUTER JOIN ";
-            }
-            $subquery_body .= $this->get_phenotype_table($form_vars['kernel_dims']) . " k7 ";
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k7.kernel_id) ";
-            }
-            $last_phenotype_alias                         = "k7";
-            $included_tables_map[KERNEL_DIMENSIONS_TABLE] = "k7";
-        }
-        
-        // Handle root length phenotype
-        if (array_key_exists('root_length', $form_vars)) {
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " FULL OUTER JOIN ";
-            }
-            $subquery_body .= $this->get_phenotype_table($form_vars['root_length']) . " k8 ";
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k8.kernel_id) ";
-            }
-            $last_phenotype_alias                   = "k8";
-            $included_tables_map[ROOT_LENGTH_TABLE] = "k8";
-        }
-        
-        // Handle root growth rate phenotype
-        if (array_key_exists('root_growth_rate', $form_vars)) {
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " FULL OUTER JOIN ";
-            }
-            $subquery_body .= $this->get_phenotype_table($form_vars['root_growth_rate']) . " k9 ";
-            if (isset($last_phenotype_alias)) {
-                $subquery_body .= " ON (" . $last_phenotype_alias . ".kernel_id = k7.kernel_id) ";
-            }
-            $last_phenotype_alias                        = "k9";
-            $included_tables_map[ROOT_GROWTH_RATE_TABLE] = "k9";
-        }
-        
+
+        // TODO : Add hacky logic to include file location table join here
+
         $subquery_select_clause = " SELECT ";
-        foreach ($included_tables_map as $table_name => $table_prefix) {
-            $subquery_select_clause .= $this->get_fact_columns_for_phenotype($table_name, $table_prefix) . " , ";
+        foreach ($included_tables_map as $table_name => $table_alias) {
+            $subquery_select_clause .= $this->get_fact_columns_for_phenotype($table_name, $table_alias) . " , ";
         }
+        // TODO : Add hacky logic to handle file location attribute here
+        
         log_message('info', "Phenotype subquery body : " . $subquery_body);
         
         $included_tables_aliases = array_values($included_tables_map);
-        log_message('info', "Aliases : " . $included_tables_aliases[0]);
         $subquery_select_clause .= $included_tables_aliases[0] . ".kernel_id AS kernel_id1";
         
         $subquery = $subquery_select_clause . " FROM " . $subquery_body . " ";
@@ -357,7 +307,7 @@ class Queryutils extends CI_Model
     }
     
     // Get all the measurement data columns for this phenotype
-    private function get_fact_columns_for_phenotype($phenotype_table, $phenotype_query_prefix)
+    private function get_fact_columns_for_phenotype($phenotype_table, $phenotype_query_prefix, $form_vars)
     {
         $phenotype_select_query = " SELECT column_name  AS col_name " . " FROM information_schema.columns " . " WHERE table_catalog='maize' AND table_name = '" . $phenotype_table . "' AND " . " data_type IN ('integer', 'double precision') AND " . " column_name NOT IN ('id', 'kernel_id') " . " ORDER BY ordinal_position ";
         log_message('info', "Query fired to get measurement data " . $phenotype_select_query);
@@ -367,7 +317,17 @@ class Queryutils extends CI_Model
         $query_output            = $this->db->query($phenotype_select_query);
         $table_abbrev_prefix     = $this->get_table_abbreviation($phenotype_table);
         foreach ($query_output->result() as $row) {
-            $fields_as_select_clause .= $phenotype_query_prefix . "." . $row->col_name . " AS " . $table_abbrev_prefix . "_" . $row->col_name . " , ";
+            $col_name = $row->col_name;
+
+            // If the current column is a non-fact column in phenotype table and has not been
+            // checkboxed on the web page, then don't show this column.
+            if( array_key_exists($col_name, $phenotype_non_fact_columns_map) && 
+                !array_key_exists($col_name, $form_vars)) 
+            {
+                continue;
+            }
+
+            $fields_as_select_clause .= $phenotype_query_prefix . "." . $col_name . " AS " . $table_abbrev_prefix . "_" . $col_name . " , ";
         }
         
         $fields_as_select_clause = trim($fields_as_select_clause);
@@ -376,15 +336,6 @@ class Queryutils extends CI_Model
         log_message('info', "Comma separated phenotype measurement data list : " . $fields_as_select_clause);
         
         return $fields_as_select_clause;
-    }
-    
-    // If the phenotype data resides in a view, stages it in a temporary table and returns
-    // its identifier. Using temporary tables instead of on-the-fly view computation leads
-    // to faster turnaround times for the queries.
-    private function get_phenotype_table($phenotype_db_object_name)
-    {
-        $phenotype_table = $phenotype_db_object_name;
-        return $phenotype_table;
     }
     
     // Returns the abbreviation of a table name. This is prefixed with the column name to 

@@ -151,13 +151,15 @@
             </td>
             <td>
                 <input type="checkbox" id="cob_position_y_meta_cbox" name="cob_position_y_meta_cbox"> COB Position Y
-            </td> 
-			<td>
-				<input type="checkbox" id="weights_repetition_meta_cbox" name="weights_repetition_meta_cbox"> Weights Repetiton
-			</td>                
+            </td>
+            <td>
+                <input type="checkbox" id="fileloc_meta_cbox" name="fileloc_meta_cbox"> File Location
+            </td>                 
 		</tr>
 		<tr>
-
+			<td>
+				<input type="checkbox" id="weights_repetition_meta_cbox" name="weights_repetition_meta_cbox"> Weights Repetiton
+			</td>    
             <td>
                 <input type="checkbox" id="weights_idx_meta_cbox" name="weights_idx_meta_cbox"> Weights IDX
             </td>			
@@ -172,7 +174,7 @@
             </td>
             <td>
                 <input type="checkbox" id="operator_meta_cbox" name="operator_meta_cbox"> Operator
-            </td>            
+            </td>
 		</tr>						
 	</tbody>
 	</table>
