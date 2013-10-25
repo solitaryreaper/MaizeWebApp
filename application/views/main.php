@@ -319,8 +319,8 @@
 			$("#weights_idx_meta_cbox").parent().hide();
 			$("#spectra_repetition_meta_cbox").parent().hide();
 			$("#spectra_idx_meta_cbox").parent().hide();
-			$("#light_tube_meta_cbox").parent().hide();
-			$("#operator_meta_cbox").parent().hide();						
+			$("#spectra_light_tube_meta_cbox").parent().hide();
+			$("#spectra_operator_meta_cbox").parent().hide();						
 		}
 		else {
 			phenotype_metadata_tags.parent().hide(); // Hide all the tags first
