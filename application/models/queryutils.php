@@ -22,13 +22,13 @@ class Queryutils extends CI_Model
     
     // Defines a mapping of phenotype table non factual columns
     public static $phenotype_non_fact_columns_map = array(
-        "weights_repetition" => "raw_weights_spectra_tbl.weights_repetition", 
-        "weights_idx" => "raw_weights_spectra_tbl.weights_idx", 
-        "spectra_repetition" => "raw_weights_spectra_tbl.spectra_repetition", 
-        "spectra_idx" => "raw_weights_spectra_tbl.spectra_idx", 
-        "spectra_light_tube" => "raw_weights_spectra_tbl.spectra_light_tube", 
-        "spectra_operator" => "raw_weights_spectra_tbl.spectra_operator",
-        "fileloc" => "files.fileloc"
+        "weights_repetition" => "raw_weights_spectra_report_tbl.weights_repetition", 
+        "weights_idx" => "raw_weights_spectra_report_tbl.weights_idx", 
+        "spectra_repetition" => "raw_weights_spectra_report_tbl.spectra_repetition", 
+        "spectra_idx" => "raw_weights_spectra_report_tbl.spectra_idx", 
+        "spectra_light_tube" => "raw_weights_spectra_report_tbl.spectra_light_tube", 
+        "spectra_operator" => "raw_weights_spectra_report_tbl.spectra_operator",
+        "file_location" => "file_location"
     );
 
     // Defines a mapping of form phenotype table identifier to actual db table name
@@ -369,7 +369,7 @@ class Queryutils extends CI_Model
     // Query that returns all the genomic information
     public function get_all_genomic_metadata_query()
     {
-        return "SELECT name, chromosone AS chromosome, map_location FROM marker_types WHERE map_location != 0 ORDER BY 1";
+        return "SELECT name, chromosone AS chromosome, map_location FROM marker_types WHERE map_location != 0 ORDER BY chromosone, map_location";
     }
     
     public function get_population_lines_genomic_meta_query()

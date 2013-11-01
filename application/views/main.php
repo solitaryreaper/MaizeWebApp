@@ -153,7 +153,7 @@
                 <input type="checkbox" id="cob_position_y_meta_cbox" name="cob_position_y_meta_cbox"> COB Position Y
             </td>
             <td>
-                <input type="checkbox" id="fileloc_meta_cbox" name="fileloc_meta_cbox"> File Location
+                <input type="checkbox" id="file_location_meta_cbox" name="file_location_meta_cbox"> File Location
             </td>                 
 		</tr>
 		<tr>
@@ -266,6 +266,9 @@
 	$(document).ready(function() {
 		var default_report_type = $("#report_type").find('option:selected').text();
 		change_display(default_report_type);
+
+		// To ensure that the loading gif is hidden when the page is initially loaded
+		$('#results_loading').hide();
 	});
 
 	// Dynamically change form based on the select report type value chosen in dropdown

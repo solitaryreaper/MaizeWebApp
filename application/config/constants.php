@@ -44,20 +44,20 @@ define('TEMP_CSV_FILES_DIRECTORY', URL.'data/temp_csv_files/');
 
 // Application specific constants
 // Phenotype measurement data tables
-define('KERNEL_3D_TABLE', 'kernel_3d');
-define('KERNEL_DIMENSIONS_TABLE', 'kernel_dims_tbl');
-define('PREDICTIONS_TABLE', 'predictions');
-define('ROOT_TIP_MEASUREMENTS_TABLE', 'root_tip_measurements_crosstab');
-define('ROOT_LENGTH_TABLE', 'root_length_crosstab');
-define('ROOT_GROWTH_RATE_TABLE', 'root_growth_rate_crosstab');
-define('RAW_WEIGHT_SPECTRA_TABLE', 'raw_weights_spectra_tbl');
-define('AVG_WEIGHT_SPECTRA_TABLE', 'avg_weights_spectra_tbl');
-define('STD_WEIGHT_SPECTRA_TABLE', 'std_weights_spectra_tbl');
+define('KERNEL_3D_TABLE', 				'reporting.kernel_3d_report_tbl');
+define('KERNEL_DIMENSIONS_TABLE', 		'reporting.kernel_dims_report_tbl');
+define('PREDICTIONS_TABLE', 			'reporting.predictions_tbl');
+define('ROOT_TIP_MEASUREMENTS_TABLE', 	'reporting.root_tip_measurements_report_tbl');
+define('ROOT_LENGTH_TABLE', 			'reporting.root_length_report_tbl');
+define('ROOT_GROWTH_RATE_TABLE', 		'reporting.root_growth_rate_report_tbl');
+define('RAW_WEIGHT_SPECTRA_TABLE', 		'reporting.raw_weights_spectra_report_tbl');
+define('AVG_WEIGHT_SPECTRA_TABLE', 		'reporting.avg_weights_spectra_report_tbl');
+define('STD_WEIGHT_SPECTRA_TABLE', 		'reporting.std_weights_spectra_report_tbl');
 
 // Phenotype metadata tables
-define('KERNEL_TABLE', 'kernels');
-define('PLATE_TABLE', 'kernel_plates');
-define('POPULATION_LINES', 'population_lines');
+define('KERNEL_TABLE', 					'public.kernels');
+define('PLATE_TABLE', 					'public.kernel_plates');
+define('POPULATION_LINES', 				'public.population_lines');
 
 define('IS_GENOMIC_INFO_REQD', 'marker_cbox');
 
