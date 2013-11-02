@@ -315,8 +315,8 @@ class Queryutils extends CI_Model
 
         // extract the schema and table name from the composite name
         if($index) {
-            $table_name = substring($phenotype_table, $index+1);
-            $schema_name = substring($phenotype_table, 0, $index);
+            $table_name = substr($phenotype_table, $index+1);
+            $schema_name = substr($phenotype_table, 0, $index);
         }
         $phenotype_select_query = " SELECT column_name  AS col_name " . " FROM information_schema.columns " . 
             " WHERE table_catalog='maize' AND table_name = '" . $table_name . 
