@@ -9,9 +9,9 @@ run_logs=""
 find ../data/temp_csv_files -mtime +1 | xargs \rm -rf
 OUT=$?
 if [ $OUT -eq 0 ];then
-	run_logs=" Deleted old temporary CSV files .."
+	run_logs="    Deleted old temporary CSV files .."
 else
-	run_logs=" Failed to delete old temporary CSV files .."
+	run_logs="    Failed to delete old temporary CSV files .."
 fi
 
 # clean old log files older than 1 day
@@ -24,14 +24,16 @@ else
 fi
 
 # invoke the database refresh script
-psql -U maizeuser -f maize_view_as_table_refresh_script.sql
+$run_start_time = `date`
+echo " ============================== NEW RUN LOGS : Time $run_start_time =============================== " >> ../data/db_refresh.log
+echo " -------------------------------------------------------------------------------------------------- " >> ../data/db_refresh.log
+psql -U maizeuser -d maize -f maize_view_as_table_refresh_script.sql  >> ../data/db_refresh.log
 OUT=$?
-if [$OUT -eq 0];then
-	run_logs =  " $run_logs \n Refreshed crosstab tables in maize database .."
+if [ $OUT -eq 0 ];then
+	run_logs=" $run_logs \n Refreshed materialized views in maize database .."
 else
-	run_logs = " $run_logs \n Failed to refresh crosstab tables in maize database .."
+	run_logs=" $run_logs \n Failed to refresh materialized views in maize database .."
 fi
 
 # mail the logs of the run
-dt=`date`
-echo -e $run_logs | mailx -s "Maize Web App Job Run Logs $dt " skprasad@cs.wisc.edu
+echo -e $run_logs | mailx -s "Maize Web App Job Run Logs $run_start_time " skprasad@cs.wisc.edu

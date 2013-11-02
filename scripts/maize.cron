@@ -1,0 +1,1 @@
+00 03 * * * ./maize_app_maintenance_script.sh | mail -s SUCCESS skprasad@cs.wisc.edu
