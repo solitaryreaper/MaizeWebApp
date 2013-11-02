@@ -210,7 +210,9 @@ class Queryutils extends CI_Model
         }
         
         // 2) Set of tables to be joined for getting the metadata
-        $subquery_body = " FROM kernels kernels " . " JOIN kernel_plates plates " . " ON (kernels.plate_id = plates.id) " . " JOIN population_lines population " . " ON (plates.population_line_id = population.id) ";
+        $subquery_body = " FROM public.kernels kernels " . " JOIN public.kernel_plates plates " . 
+            " ON (kernels.plate_id = plates.id) " . " JOIN population_lines population " . 
+            " ON (plates.population_line_id = population.id) ";
         
         // 3) Dynamically generate the WHERE clause for the query based on the filters chosen
         $subquery_where_clause = " WHERE 1=1 ";
@@ -287,13 +289,10 @@ class Queryutils extends CI_Model
             $table_alias_counter = $table_alias_counter + 1;
         }
 
-        // TODO : Add hacky logic to include file location table join here
-
         $subquery_select_clause = " SELECT ";
         foreach ($included_tables_map as $table_name => $table_alias) {
             $subquery_select_clause .= $this->get_fact_columns_for_phenotype($table_name, $table_alias, $form_vars) . " , ";
         }
-        // TODO : Add hacky logic to handle file location attribute here
 
         log_message('info', "Phenotype subquery body : " . $subquery_body);
         
@@ -310,7 +309,19 @@ class Queryutils extends CI_Model
     // Get all the measurement data columns for this phenotype
     private function get_fact_columns_for_phenotype($phenotype_table, $phenotype_query_prefix, $form_vars)
     {
-        $phenotype_select_query = " SELECT column_name  AS col_name " . " FROM information_schema.columns " . " WHERE table_catalog='maize' AND table_name = '" . $phenotype_table . "' AND " . " column_name NOT IN ('id', 'kernel_id', 'repetitions') " . " ORDER BY ordinal_position ";
+        $table_name = $phenotype_table;
+        $schema_name = "public"; // Default schema
+        $index = strpos($phenotype_table, ".");
+
+        // extract the schema and table name from the composite name
+        if($index) {
+            $table_name = substring($phenotype_table, $index+1);
+            $schema_name = substring($phenotype_table, 0, $index);
+        }
+        $phenotype_select_query = " SELECT column_name  AS col_name " . " FROM information_schema.columns " . 
+            " WHERE table_catalog='maize' AND table_name = '" . $table_name . 
+            "' AND table_schema = '". $schema_name . "' AND column_name NOT IN ('id', 'kernel_id', 'repetitions') " . 
+            " ORDER BY ordinal_position ";
         log_message('info', "Query fired to get measurement data " . $phenotype_select_query);
         
         // get a comma separated list of field values
@@ -375,8 +386,8 @@ class Queryutils extends CI_Model
     public function get_population_lines_genomic_meta_query()
     {
         $query = " SELECT m.population_line_id, mt.name AS marker_name, CAST(m.value AS text) AS marker_value  ";
-        $query .= " FROM marker_types mt ";
-        $query .= " JOIN markers m ";
+        $query .= " FROM public.marker_types mt ";
+        $query .= " JOIN public.markers m ";
         $query .= " ON (m.marker_type_id = mt.id) ";
         $query .= " WHERE mt.map_location != 0";
         $query .= " ORDER BY 1,2";
