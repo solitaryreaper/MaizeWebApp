@@ -44,10 +44,10 @@ define('TEMP_CSV_FILES_DIRECTORY', URL.'data/temp_csv_files/');
 
 // Application specific constants
 // Phenotype measurement data tables
-define('KERNEL_3D_TABLE', 			'reporting.kernel_3d_report_tbl');
+define('KERNEL_3D_TABLE', 				'reporting.kernel_3d_report_tbl');
 define('KERNEL_DIMENSIONS_TABLE', 		'reporting.kernel_dims_report_tbl');
 define('PREDICTIONS_TABLE', 			'reporting.predictions_report_tbl');
-define('ROOT_TIP_MEASUREMENTS_TABLE', 		'reporting.root_tip_measurements_report_tbl');
+define('ROOT_TIP_MEASUREMENTS_TABLE', 	'reporting.root_tip_measurements_report_tbl');
 define('ROOT_LENGTH_TABLE', 			'reporting.root_length_report_tbl');
 define('ROOT_GROWTH_RATE_TABLE', 		'reporting.root_growth_rate_report_tbl');
 define('RAW_WEIGHT_SPECTRA_TABLE', 		'reporting.raw_weights_spectra_report_tbl');

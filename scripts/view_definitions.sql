@@ -1022,3 +1022,50 @@ CREATE OR REPLACE VIEW reporting.std_weights_spectra_report_vw AS
 ALTER TABLE reporting.std_weights_spectra_report_vw
   OWNER TO maizeuser;
 
+-- View for root_growth_rate report
+CREATE OR REPLACE VIEW reporting.root_growth_rate_report_vw AS
+    SELECT ctab.*, 
+           files.fileloc AS file_location 
+    FROM   (SELECT DISTINCT kernel_id, 
+                            file_id 
+            FROM   public.root_growth_rate) src 
+           JOIN reporting.root_growth_rate_crosstab ctab 
+             ON ( src.kernel_id = ctab.kernel_id ) 
+           LEFT OUTER JOIN files 
+             ON ( src.file_id = files.id ) 
+    ORDER  BY ctab.kernel_id;
+
+ALTER TABLE reporting.root_growth_rate_report_vw
+  OWNER TO maizeuser;
+
+-- View for root_length report
+CREATE OR REPLACE VIEW reporting.root_length_report_vw AS
+    SELECT ctab.*, 
+           files.fileloc AS file_location 
+    FROM   (SELECT DISTINCT kernel_id, 
+                            file_id 
+            FROM   public.root_length) src 
+           JOIN reporting.root_length_crosstab ctab 
+             ON ( src.kernel_id = ctab.kernel_id ) 
+           LEFT OUTER JOIN files 
+             ON ( src.file_id = files.id ) 
+    ORDER  BY ctab.kernel_id;
+
+ALTER TABLE reporting.root_length_report_vw
+  OWNER TO maizeuser;
+
+-- View for root_tip_measurements report
+CREATE OR REPLACE VIEW reporting.root_tip_measurements_report_vw AS
+    SELECT ctab.*, 
+           files.fileloc AS file_location 
+    FROM   (SELECT DISTINCT kernel_id, 
+                            file_id 
+            FROM   public.root_tip_measurements) src 
+           JOIN reporting.root_tip_measurements_crosstab ctab 
+             ON ( src.kernel_id = ctab.kernel_id ) 
+           LEFT OUTER JOIN files 
+             ON ( src.file_id = files.id ) 
+    ORDER  BY ctab.kernel_id;
+
+ALTER TABLE reporting.root_tip_measurements_report_vw
+  OWNER TO maizeuser;    

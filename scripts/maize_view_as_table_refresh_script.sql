@@ -4,6 +4,9 @@
 	every day via a cron job and checks for the latest incremental changes to the view and
 	pushes it to the corresponding tables. It assumes that the all changes in maize database
 	are only INSERTS and there are no UPDATES or DELETES.
+
+	These materialized views are highly denormalized to enable easy reporting and keep the application
+	layer really simple.
 */
 
 -- Update raw_weights_spectra_report_tbl
@@ -50,20 +53,7 @@ CREATE INDEX root_tip_ct_ix ON reporting.root_tip_measurements_crosstab(kernel_i
 
 DROP TABLE reporting.root_tip_measurements_report_tbl;
 
-SELECT root_tip_measurements_report_vw.* INTO reporting.root_tip_measurements_report_tbl 
-FROM
-(
-	SELECT ctab.*, 
-	       files.fileloc AS file_location 
-	FROM   (SELECT DISTINCT kernel_id, 
-	                        file_id 
-	        FROM   public.root_tip_measurements) src 
-	       JOIN reporting.root_tip_measurements_crosstab ctab 
-	         ON ( src.kernel_id = ctab.kernel_id ) 
-	       LEFT OUTER JOIN files 
-	         ON ( src.file_id = files.id ) 
-	ORDER  BY ctab.kernel_id 
-) root_tip_measurements_report_vw;
+SELECT * INTO reporting.root_tip_measurements_report_tbl FROM reporting.root_tip_measurements_report_vw;
 CREATE INDEX root_tip_report_ix ON reporting.root_tip_measurements_report_tbl(kernel_id);
 
 -- Update root length crosstab table and the report table
@@ -74,20 +64,7 @@ CREATE INDEX root_length_ct_ix ON root_length_crosstab(kernel_id);
 
 DROP TABLE reporting.root_length_report_tbl;
 
-SELECT root_length_report_vw.* INTO reporting.root_length_report_tbl 
-FROM
-(
-	SELECT ctab.*, 
-	       files.fileloc AS file_location 
-	FROM   (SELECT DISTINCT kernel_id, 
-	                        file_id 
-	        FROM   public.root_length) src 
-	       JOIN reporting.root_length_crosstab ctab 
-	         ON ( src.kernel_id = ctab.kernel_id ) 
-	       LEFT OUTER JOIN files 
-	         ON ( src.file_id = files.id ) 
-	ORDER  BY ctab.kernel_id 
-) root_length_report_vw;
+SELECT INTO reporting.root_length_report_tbl FROM reporting.root_length_report_vw;
 CREATE INDEX root_length_report_ix ON reporting.root_length_report_tbl(kernel_id);
 
 -- Update root growth rate crosstab table and the report table
@@ -98,18 +75,5 @@ CREATE INDEX root_growth_rate_ct_ix ON reporting.root_growth_rate_crosstab(kerne
 
 DROP TABLE reporting.root_growth_rate_report_tbl;
 
-SELECT root_growth_rate_report_vw.* INTO reporting.root_growth_rate_report_tbl 
-FROM
-(
-	SELECT ctab.*, 
-	       files.fileloc AS file_location 
-	FROM   (SELECT DISTINCT kernel_id, 
-	                        file_id 
-	        FROM   pubvlic.root_growth_rate) src 
-	       JOIN reporting.root_growth_rate_crosstab ctab 
-	         ON ( src.kernel_id = ctab.kernel_id ) 
-	       LEFT OUTER JOIN files 
-	         ON ( src.file_id = files.id ) 
-	ORDER  BY ctab.kernel_id 
-) root_growth_rate_report_vw;
+SELECT * INTO reporting.root_growth_rate_report_tbl FROM reporting.root_growth_rate_report_vw;
 CREATE INDEX root_growth_rate_report_ix ON reporting.root_growth_rate_report_tbl(kernel_id);
