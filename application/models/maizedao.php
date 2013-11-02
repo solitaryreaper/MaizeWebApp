@@ -13,6 +13,8 @@ class Maizedao extends CI_Model
         
         $this->load->model('queryutils');
         $this->load->model('csvutils');
+
+        //$this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));        
     }
     
     // Returns three header rows containing all the genomic information - marker name,
@@ -113,7 +115,26 @@ class Maizedao extends CI_Model
         if(!$is_empty_results) {
             // Get the genomic data crosstab keyed by population id. This is an expensive query, so only run
             // this if there is some data to match the crosstab data to.
-            $population_genomic_crosstab = $this->get_population_genomic_meta_crosstab($header_rows['NAME']);         
+            $population_genomic_crosstab = $this->get_population_genomic_meta_crosstab($header_rows['NAME']);
+
+            /*
+            $population_genomic_crosstab = NULL;
+            log_message("info", "##Testing the genomic crosstab ..");
+            log_message("info", var_dump($this->cache->cache_info()));
+            if(! $population_genomic_crosstab = $this->cache->get('genome_crosstab')) {
+                log_message("info", "Re-triggering crosstab generation ..");
+                $population_genomic_crosstab = $this->get_population_genomic_meta_crosstab($header_rows['NAME']);
+
+                // Save the genomic crosstab for 10 minutes
+                $start_time = microtime(true);
+                $this->cache->save('genome_crosstab', $population_genomic_crosstab, 600);
+                $end_time = microtime(true);
+                log_message("info", "##Saved into cache : genomic crosstab in " . ($end_time - $start_time) . " seconds.");
+            }
+            else {
+                log_message("info", "## Fetched from cache. Yuppie !!");
+            }
+            */
 
             $empty_genomic_info_filler_row = array_fill(0, count($header_rows['NAME']), "");
             foreach ($db_results->result() as $pid_row) {

@@ -48,7 +48,7 @@ CREATE INDEX kernel_3d_report_ix ON reporting.kernel_3d_report_tbl(kernel_id);
 -- Update root tip measurement crosstab table and the report table
 DROP TABLE reporting.root_tip_measurements_crosstab;
 
-SELECT * FROM generate_root_tip_crosstab('public.root_tip_measurements', 'reporting.root_tip_measurements_crosstab'); 
+SELECT * FROM reporting.generate_root_tip_crosstab('public.root_tip_measurements', 'reporting.root_tip_measurements_crosstab'); 
 CREATE INDEX root_tip_ct_ix ON reporting.root_tip_measurements_crosstab(kernel_id);
 
 DROP TABLE reporting.root_tip_measurements_report_tbl;
@@ -59,19 +59,19 @@ CREATE INDEX root_tip_report_ix ON reporting.root_tip_measurements_report_tbl(ke
 -- Update root length crosstab table and the report table
 DROP TABLE reporting.root_length_crosstab;
 
-SELECT * FROM generate_root_length_crosstab('public.root_length', 'reporting.root_length_crosstab');
-CREATE INDEX root_length_ct_ix ON root_length_crosstab(kernel_id);
+SELECT * FROM reporting.generate_root_length_crosstab('public.root_length', 'reporting.root_length_crosstab');
+CREATE INDEX root_length_ct_ix ON reporting.root_length_crosstab(kernel_id);
 
 DROP TABLE reporting.root_length_report_tbl;
 
-SELECT INTO reporting.root_length_report_tbl FROM reporting.root_length_report_vw;
+SELECT * INTO reporting.root_length_report_tbl FROM reporting.root_length_report_vw;
 CREATE INDEX root_length_report_ix ON reporting.root_length_report_tbl(kernel_id);
 
 -- Update root growth rate crosstab table and the report table
 DROP TABLE reporting.root_growth_rate_crosstab;
 
-SELECT * FROM generate_root_length_crosstab('public.root_growth_rate', 'reporting.root_growth_rate_crosstab');
-CREATE INDEX root_growth_rate_ct_ix ON reporting.root_growth_rate_crosstab(kernel_id);
+SELECT * FROM reporting.generate_root_growth_rate_crosstab('public.root_growth_rate', 'reporting.root_growth_rate_crosstab');
+CREATE INDEX root_growth_rate_report_ix ON reporting.root_growth_rate_crosstab(kernel_id);
 
 DROP TABLE reporting.root_growth_rate_report_tbl;
 
