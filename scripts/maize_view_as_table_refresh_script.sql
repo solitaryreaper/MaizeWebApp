@@ -46,10 +46,26 @@ SELECT * INTO reporting.kernel_3d_report_tbl FROM public.kernel_3d;
 CREATE INDEX kernel_3d_report_ix ON reporting.kernel_3d_report_tbl(kernel_id);
 
 -- Update root tip measurement crosstab table and the report table
+DROP VIEW reporting.root_tip_measurements_report_vw;
 DROP TABLE reporting.root_tip_measurements_crosstab;
 
 SELECT * FROM reporting.generate_root_tip_crosstab('public.root_tip_measurements', 'reporting.root_tip_measurements_crosstab'); 
 CREATE INDEX root_tip_ct_ix ON reporting.root_tip_measurements_crosstab(kernel_id);
+
+CREATE OR REPLACE VIEW reporting.root_tip_measurements_report_vw AS
+    SELECT ctab.*, 
+           files.fileloc AS file_location 
+    FROM   (SELECT DISTINCT kernel_id, 
+                            file_id 
+            FROM   public.root_tip_measurements) src 
+           JOIN reporting.root_tip_measurements_crosstab ctab 
+             ON ( src.kernel_id = ctab.kernel_id ) 
+           LEFT OUTER JOIN files 
+             ON ( src.file_id = files.id ) 
+    ORDER  BY ctab.kernel_id;
+
+ALTER TABLE reporting.root_tip_measurements_report_vw
+  OWNER TO maizeuser;    
 
 DROP TABLE reporting.root_tip_measurements_report_tbl;
 
@@ -57,10 +73,26 @@ SELECT * INTO reporting.root_tip_measurements_report_tbl FROM reporting.root_tip
 CREATE INDEX root_tip_report_ix ON reporting.root_tip_measurements_report_tbl(kernel_id);
 
 -- Update root length crosstab table and the report table
+DROP VIEW reporting.root_length_report_vw;
 DROP TABLE reporting.root_length_crosstab;
 
 SELECT * FROM reporting.generate_root_length_crosstab('public.root_length', 'reporting.root_length_crosstab');
 CREATE INDEX root_length_ct_ix ON reporting.root_length_crosstab(kernel_id);
+
+CREATE OR REPLACE VIEW reporting.root_length_report_vw AS
+    SELECT ctab.*, 
+           files.fileloc AS file_location 
+    FROM   (SELECT DISTINCT kernel_id, 
+                            file_id 
+            FROM   public.root_length) src 
+           JOIN reporting.root_length_crosstab ctab 
+             ON ( src.kernel_id = ctab.kernel_id ) 
+           LEFT OUTER JOIN files 
+             ON ( src.file_id = files.id ) 
+    ORDER  BY ctab.kernel_id;
+
+ALTER TABLE reporting.root_length_report_vw
+  OWNER TO maizeuser;
 
 DROP TABLE reporting.root_length_report_tbl;
 
@@ -68,10 +100,26 @@ SELECT * INTO reporting.root_length_report_tbl FROM reporting.root_length_report
 CREATE INDEX root_length_report_ix ON reporting.root_length_report_tbl(kernel_id);
 
 -- Update root growth rate crosstab table and the report table
+DROP VIEW reporting.root_growth_rate_report_vw;
 DROP TABLE reporting.root_growth_rate_crosstab;
 
 SELECT * FROM reporting.generate_root_growth_rate_crosstab('public.root_growth_rate', 'reporting.root_growth_rate_crosstab');
-CREATE INDEX root_growth_rate_report_ix ON reporting.root_growth_rate_crosstab(kernel_id);
+CREATE INDEX root_growth_rate_ct_ix ON reporting.root_growth_rate_crosstab(kernel_id);
+
+CREATE OR REPLACE VIEW reporting.root_growth_rate_report_vw AS
+    SELECT ctab.*, 
+           files.fileloc AS file_location 
+    FROM   (SELECT DISTINCT kernel_id, 
+                            file_id 
+            FROM   public.root_growth_rate) src 
+           JOIN reporting.root_growth_rate_crosstab ctab 
+             ON ( src.kernel_id = ctab.kernel_id ) 
+           LEFT OUTER JOIN files 
+             ON ( src.file_id = files.id ) 
+    ORDER  BY ctab.kernel_id;
+
+ALTER TABLE reporting.root_growth_rate_report_vw
+  OWNER TO maizeuser;
 
 DROP TABLE reporting.root_growth_rate_report_tbl;
 
