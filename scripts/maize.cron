@@ -1,1 +1,2 @@
-00 03 * * * ./maize_app_maintenance_script.sh | mail -s SUCCESS skprasad@cs.wisc.edu
+0 3 * * * /bin/sh /var/www/html/MaizeWebApp/scripts/maize_app_maintenance_script.sh > /var/www/html/MaizeWebApp/data/cron.out 2> /var/www/html/MaizeWebApp/data/cron.err 
+
