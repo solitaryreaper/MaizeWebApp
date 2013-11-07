@@ -15,7 +15,7 @@ else
 fi
 
 # clean old log files older than 1 day
-find /var/www/html/MaizeWebApp/data/temp_csv_files -mtime +1 | /usr/bin/xargs \rm -rf
+find /var/www/html/MaizeWebApp/application/logs -mtime +1 | /usr/bin/xargs \rm -rf
 OUT=$?
 if [ $OUT -eq 0 ];then
 	run_logs=" $run_logs \n Deleted old log files .."
