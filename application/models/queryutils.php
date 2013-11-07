@@ -130,6 +130,7 @@ class Queryutils extends CI_Model
         $phenotype_query_select_clause = "";
         if (!$this->is_aggregate_function_report($form_vars)) {
             $excluded_columns                    = array(
+                "kernel_id",
                 "kernel_id1",
                 "population_line_id"
             );
