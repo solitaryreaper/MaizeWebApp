@@ -33,7 +33,9 @@
 	                	<option selected>Average Phenotypes</option> 
 	                	<option>Standard Deviation Phenotypes</option> 	               		
 	                	<option>Raw Weight/Spectra</option>  
-	                	<option>Raw Phenotypes</option>  
+	                	<option>Raw Phenotypes</option>
+	                	<option>Phenotype Line Correlation</option>
+	                	<option>Phenotype Correlation</option>
               		</select>  
             		</div>  
           			</div>
@@ -76,6 +78,9 @@
 			</td>
 			<td>
 				<input type="checkbox" id="root_growth_rate_phenotype_cbox" name="root_growth_rate_phenotype_cbox"> Root Growth Rate
+			</td>
+			<td>
+				<input type="checkbox" id="select_all_phenotype_cbox" name="select_all_cbox"><span class="label label-warning">SELECT ALL</span>
 			</td>			
 		</tr>		
 	</tbody>
@@ -277,6 +282,18 @@
 		change_display(report_type);
 	});
 
+	// If SELECT ALL checkbox has been checked, check all the visible phenotypes.
+	$("#select_all_phenotype_cbox").on('click change', function() {
+		var phenotype_tags = $("[id$='_phenotype_cbox']");
+		var is_all_cbox_selected = $("#select_all_phenotype_cbox").prop("checked");
+		if(is_all_cbox_selected) {
+			phenotype_tags.prop('checked', true);
+		}
+		else {
+			phenotype_tags.prop('checked', false);
+		}
+	});
+
 	// Changes the display of the web page based on the report chosen
 	function change_display(report_type)
 	{
@@ -339,7 +356,7 @@
 	{
 		var phenotype_genomic_metadata_tags = $("[id$='marker_cbox']");
 		phenotype_genomic_metadata_tags.removeAttr('checked');
-		if(report_type == "Raw Weight/Spectra" || report_type == "Raw Phenotypes") {
+		if(report_type == "Raw Weight/Spectra" || report_type == "Raw Phenotypes" || report_type == "Phenotype Correlation") {
 			phenotype_genomic_metadata_tags.parent().closest("table").hide();
 		}
 		else {

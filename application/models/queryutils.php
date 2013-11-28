@@ -298,7 +298,7 @@ class Queryutils extends CI_Model
         log_message('info', "Phenotype subquery body : " . $subquery_body);
         
         $included_tables_aliases = array_values($included_tables_map);
-        $subquery_select_clause .= $included_tables_aliases[0] . ".kernel_id AS kernel_id1";
+        $subquery_select_clause .= $this->get_phenotype_query_id_column($included_tables_aliases);
         
         $subquery = $subquery_select_clause . " FROM " . $subquery_body . " ";
         log_message('info', "Phenotype subquery generated : " . $subquery);
@@ -307,6 +307,19 @@ class Queryutils extends CI_Model
         return $subquery;
     }
     
+    // When multiple phenotype tables have to be full joined to each other, then the identifier
+    // column should be the first non-null value.
+    private function get_phenotype_query_id_column($included_tables_aliases)
+    {
+        $id_column_select_snippet = "COALESCE(";
+        foreach($included_tables_aliases as $table_alias) {
+            $id_column_select_snippet .= " " . $table_alias . ".kernel_id , ";
+        }
+        $id_column_select_snippet .= " null) AS kernel_id1";
+
+        return $id_column_select_snippet;
+    }
+
     // Get all the measurement data columns for this phenotype
     private function get_fact_columns_for_phenotype($phenotype_table, $phenotype_query_prefix, $form_vars)
     {
