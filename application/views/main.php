@@ -79,9 +79,6 @@
 			<td>
 				<input type="checkbox" id="root_growth_rate_phenotype_cbox" name="root_growth_rate_phenotype_cbox"> Root Growth Rate
 			</td>
-			<td>
-				<input type="checkbox" id="select_all_phenotype_cbox" name="select_all_cbox"><span class="label label-warning">SELECT ALL</span>
-			</td>			
 		</tr>		
 	</tbody>
 	</table>
@@ -280,18 +277,6 @@
 	$("#report_type").on('change', function() {
 		var report_type = $(this).val();
 		change_display(report_type);
-	});
-
-	// If SELECT ALL checkbox has been checked, check all the visible phenotypes.
-	$("#select_all_phenotype_cbox").on('click change', function() {
-		var phenotype_tags = $("[id$='_phenotype_cbox']");
-		var is_all_cbox_selected = $("#select_all_phenotype_cbox").prop("checked");
-		if(is_all_cbox_selected) {
-			phenotype_tags.prop('checked', true);
-		}
-		else {
-			phenotype_tags.prop('checked', false);
-		}
 	});
 
 	// Changes the display of the web page based on the report chosen
