@@ -59,6 +59,10 @@ define('KERNEL_TABLE', 					'public.kernels');
 define('PLATE_TABLE', 					'public.kernel_plates');
 define('POPULATION_LINES', 				'public.population_lines');
 
+// Phenotype correlation tables
+define('PHENOTYPE_LINE_CORRELATION_TABLE', 	'reporting.correlation_pid_phenotype_pairs_tbl');
+define('PHENOTYPE_CORRELATION_TABLE', 		'reporting.correlation_phenotype_pairs_tbl');
+
 define('IS_GENOMIC_INFO_REQD', 'marker_cbox');
 
 define('PHP_EXECUTE', '/usr/bin/php');

@@ -51,19 +51,104 @@ class Queryutils extends CI_Model
     {
         $start_time                    = microtime(true);
         $query                         = "";
-        $phenotype_facts_subquery      = $this->get_phenotype_subquery($form_vars);
-        $phenotype_meta_subquery       = $this->get_phenotype_meta_subquery($form_vars);
-        $phenotype_query_select_clause = $this->get_phenotype_query_select_clause($phenotype_meta_subquery, $phenotype_facts_subquery, $form_vars);
-        
-        $phenotype_query_group_by_clause = $this->get_phenotype_query_group_by_clause($phenotype_meta_subquery, $form_vars);
-        
-        $query .= "SELECT " . $phenotype_query_select_clause . " FROM (" . $phenotype_facts_subquery . " ) pfacts JOIN (" . $phenotype_meta_subquery . ") pmeta ON pfacts.kernel_id1 = pmeta.kernel_id " . $phenotype_query_group_by_clause;
-        
+
+        // HACK : handle correlation queries differently because they don't follow the structure
+        // that was designed for dynamnic query generation
+        $report_type = $form_vars['report_type'];
+        if($report_type == "Phenotype Line Correlation" || $report_type == "Phenotype Correlation") {
+            log_message('info', 'Inside correlation query ..');
+            $query = $this->get_phenotype_correlation_query($report_type, $form_vars);
+            log_message('info', 'Correlation query : ' . $query);
+        }
+        else {
+            $phenotype_facts_subquery      = $this->get_phenotype_subquery($form_vars);
+            $phenotype_meta_subquery       = $this->get_phenotype_meta_subquery($form_vars);
+            $phenotype_query_select_clause = $this->get_phenotype_query_select_clause($phenotype_meta_subquery, $phenotype_facts_subquery, $form_vars);
+            
+            $phenotype_query_group_by_clause = $this->get_phenotype_query_group_by_clause($phenotype_meta_subquery, $form_vars);
+            
+            $query .= "SELECT " . $phenotype_query_select_clause . " FROM (" . $phenotype_facts_subquery . " ) pfacts JOIN (" . $phenotype_meta_subquery . ") pmeta ON pfacts.kernel_id1 = pmeta.kernel_id " . $phenotype_query_group_by_clause;
+        }
+     
         log_message('info', "Final query : " . $query);
         $end_time = microtime(true);
         log_message("info", "Dynamic final query generation took : " . ($end_time - $start_time) . " seconds.");
         
         return $query;
+    }
+
+    // Generates the dynamic query for correlation reports
+    private function get_phenotype_correlation_query($report_type, $form_vars)
+    {
+        $query_where_clause = "";
+
+        // Find which phenotype tables to include
+        $tables_to_include = "";
+        foreach(Queryutils::$form_key_to_table_map as $form_key => $table_name) {
+            log_message("info", "Key : " . $form_key . ", Table : " . $table_name);
+            if (!array_key_exists($form_key, $form_vars)) {
+                continue;
+            }
+
+            $tables_to_include .= "'" . $table_name . "' , ";
+        }
+        $tables_to_include = trim($tables_to_include);
+        $tables_to_include = rtrim($tables_to_include, ",");
+
+        $query_where_clause .= " WHERE phen_pairs.p1table IN (" . $tables_to_include . 
+            ") AND phen_pairs.p2table IN (" . $tables_to_include . ")";        
+
+        // Handle population type filter
+        if (array_key_exists('filter_type_value', $form_vars)) {
+            $query_where_clause .= " AND population.type = '" . $form_vars['filter_type_value'] . "' ";
+        }
+
+        $phenotype_correlation_query = "";
+        // Correlation at population id and phenotype pair id level
+        if($report_type == "Phenotype Line Correlation") {
+            $phenotype_correlation_query = "SELECT 
+                population.isolate,
+                population.type,
+                phen_pairs.p1table,
+                phen_pairs.p1field,
+                phen_pairs.p2table,
+                phen_pairs.p2field,
+                corr_tbl.corr_coeff,
+                corr_tbl.stddev1,
+                corr_tbl.stddev2,
+                corr_tbl.variance1,
+                corr_tbl.variance2
+            FROM reporting.correlation_pid_phenotype_pairs_tbl corr_tbl
+            JOIN population_lines population
+                ON (corr_tbl.population_line_id = population.id)
+            JOIN phenotype_pairs phen_pairs
+                ON (corr_tbl.pheno1_id = phen_pairs.p1id AND corr_tbl.pheno2_id = phen_pairs.p2id)";     
+
+            $phenotype_correlation_query .= $query_where_clause . " ORDER BY population.isolate, population.type";
+        }
+        // Correlation at population type and phenotype pair id level
+        else {
+            $phenotype_correlation_query = "SELECT 
+                population.type,
+                phen_pairs.p1table,
+                phen_pairs.p1field,
+                phen_pairs.p2table,
+                phen_pairs.p2field,
+                corr_tbl.corr_coeff,
+                corr_tbl.stddev1,
+                corr_tbl.stddev2,
+                corr_tbl.variance1,
+                corr_tbl.variance2
+            FROM reporting.correlation_ptype_phenotype_pairs_tbl corr_tbl
+            JOIN population_lines population
+                ON (corr_tbl.population_type = population.type::text)
+            JOIN phenotype_pairs phen_pairs
+                ON (corr_tbl.pheno1_id = phen_pairs.p1id AND corr_tbl.pheno2_id = phen_pairs.p2id)";     
+
+            $phenotype_correlation_query .= $query_where_clause . " ORDER BY population.type";
+        }
+
+        return $phenotype_correlation_query;
     }
     
     // Generates the list of columns to show in SELECT or GROUP BY clause in the final phenotype query.

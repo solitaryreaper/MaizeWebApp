@@ -1069,3 +1069,35 @@ CREATE OR REPLACE VIEW reporting.root_tip_measurements_report_vw AS
 
 ALTER TABLE reporting.root_tip_measurements_report_vw
   OWNER TO maizeuser;    
+
+-- View for phenotype pairs
+CREATE OR REPLACE VIEW phenotype_pairs AS
+SELECT p1.id AS p1id ,
+       p2.id AS p2id,
+       p1.table_name AS p1table,
+       p1.field_name AS p1field,
+       p2.table_name AS p2table,
+       p2.field_name AS p2field
+FROM (
+        (SELECT *
+         FROM phenotype_names) p1
+      JOIN
+        (SELECT *
+         FROM phenotype_names) p2 ON p1.id < p2.id)
+
+--View for phenotype correlation pairs
+CREATE OR REPLACE VIEW phenotype_pairs_correlate AS
+SELECT p1.id AS p1id ,
+       p2.id AS p2id,
+       p1.table_name AS p1table,
+       p1.field_name AS p1field,
+       p2.table_name AS p2table,
+       p2.field_name AS p2field
+FROM (
+        (SELECT *
+         FROM phenotype_names
+         WHERE correlate = TRUE) p1
+      JOIN
+        (SELECT *
+         FROM phenotype_names
+         WHERE correlate = TRUE) p2 ON p1.id < p2.id)

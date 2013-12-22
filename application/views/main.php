@@ -285,6 +285,7 @@
 		change_phenotype_display(report_type);
 		change_phenotype_metadata_display(report_type);
 		change_phenotype_genomic_metadata_display(report_type);
+		change_phenotype_column_filters(report_type);
 
 		// change the filter value to a default value
 		$("#filter_type_value").val("ALL");
@@ -341,13 +342,28 @@
 	{
 		var phenotype_genomic_metadata_tags = $("[id$='marker_cbox']");
 		phenotype_genomic_metadata_tags.removeAttr('checked');
-		if(report_type == "Raw Weight/Spectra" || report_type == "Raw Phenotypes" || report_type == "Phenotype Correlation") {
+		if(report_type == "Raw Weight/Spectra" || report_type == "Raw Phenotypes" || report_type == "Phenotype Correlation" ||
+		   report_type == "Phenotype Line Correlation") 
+		{
 			phenotype_genomic_metadata_tags.parent().closest("table").hide();
 		}
 		else {
 			phenotype_genomic_metadata_tags.parent().closest("table").show();
 		}
 
+	}
+
+	// Modifies the filters available
+	function change_phenotype_column_filters(report_type)
+	{
+		if(report_type == "Phenotype Line Correlation" || report_type == "Phenotype Correlation") {
+			$("#filter_plate_option").parent().closest("tr").hide();
+			$("#filter_packet_option").parent().closest("tr").hide();
+		}
+		else {
+			$("#filter_plate_option").parent().closest("tr").show();
+			$("#filter_packet_option").parent().closest("tr").show();
+		}
 	}
 
 	// Validates the form
